@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b6c1ad3fe21c0249a6c7daae7236ddc, type: 3}
+  m_Name: Dialog 4
+  m_EditorClassIdentifier: Assembly-CSharp::StoryNode
+  storyLines:
+  - You meet her outside she is hungry and cold3
+  - what will you do?3
+  - what will you do?4
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  - what will you do?5
+  leftButtonText: 
+  leftButtonPoints: 0
+  leftNextNode: {fileID: 0}
+  rightButtonText: 
+  rightButtonPoints: 0
+  rightNextNode: {fileID: 0}
