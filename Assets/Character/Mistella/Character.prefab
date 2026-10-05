@@ -1131,7 +1131,16 @@ MonoBehaviour:
   shakeDamping: 5
   loopingSound: {fileID: 8300000, guid: d3040e0978800ea47b4d6cba72ccf4f4, type: 3}
   loopVolume: 0.5
-  randomBounceSounds: []
+  randomBounceSounds:
+  - {fileID: 8300000, guid: 829ff1cd688a34541b0c7b2313409925, type: 3}
+  - {fileID: 8300000, guid: 4221986645283dd49ab11011a32aef15, type: 3}
+  - {fileID: 8300000, guid: 4e2a050bba154c841a4c135e5464d780, type: 3}
+  - {fileID: 8300000, guid: b6287ac3bbfe724438585e4a5ab8ad8e, type: 3}
+  - {fileID: 8300000, guid: 4b43d869f5380d54caeddc9c780ea244, type: 3}
+  - {fileID: 8300000, guid: af929cbcc26fe0e4bb64e375b667f26c, type: 3}
+  - {fileID: 8300000, guid: 8d31d9ccb3ea8a64eac4b0add9b510b0, type: 3}
+  - {fileID: 8300000, guid: ac139cb3ff1e68b4396a37824bc2b6fa, type: 3}
+  - {fileID: 8300000, guid: 8053b5c033754b7419aab673a3282590, type: 3}
   bounceVolume: 0.8
 --- !u!1 &2282386177153659975
 GameObject:

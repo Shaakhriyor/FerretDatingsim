@@ -8,13 +8,69 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: loopVolume
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: randomBounceSounds.Array.size
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: 'randomBounceSounds.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 829ff1cd688a34541b0c7b2313409925, type: 3}
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: 'randomBounceSounds.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 4221986645283dd49ab11011a32aef15, type: 3}
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: 'randomBounceSounds.Array.data[2]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: 'randomBounceSounds.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8300000, guid: b6287ac3bbfe724438585e4a5ab8ad8e, type: 3}
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: 'randomBounceSounds.Array.data[4]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 4b43d869f5380d54caeddc9c780ea244, type: 3}
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: 'randomBounceSounds.Array.data[5]'
+      value: 
+      objectReference: {fileID: 8300000, guid: af929cbcc26fe0e4bb64e375b667f26c, type: 3}
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: 'randomBounceSounds.Array.data[6]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 8d31d9ccb3ea8a64eac4b0add9b510b0, type: 3}
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: 'randomBounceSounds.Array.data[7]'
+      value: 
+      objectReference: {fileID: 8300000, guid: ac139cb3ff1e68b4396a37824bc2b6fa, type: 3}
+    - target: {fileID: 1101756306098280806, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: 'randomBounceSounds.Array.data[8]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 8053b5c033754b7419aab673a3282590, type: 3}
+    - target: {fileID: 1248583362057444664, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1768716278980553162, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4027016053435477372, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5058158332456165341, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.4534426
+      value: 0.59000015
       objectReference: {fileID: 0}
     - target: {fileID: 5058158332456165341, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.1235299
+      value: 0.86
       objectReference: {fileID: 0}
     - target: {fileID: 5058158332456165341, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
       propertyPath: m_LocalPosition.z
@@ -51,6 +107,10 @@ PrefabInstance:
     - target: {fileID: 6191954684672348725, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
       propertyPath: m_Name
       value: Character Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 6191954684672348725, guid: 82305d5e11ccb2045a4c392e540ea4af, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
