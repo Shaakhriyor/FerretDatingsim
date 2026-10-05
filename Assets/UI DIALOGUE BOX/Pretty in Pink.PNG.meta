@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 23270e1b3aef6d64d990209c2d13de9f
+guid: caa826129e1b8ec47b79aed54efd6a88
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4717658861039131045
-    second: Maalitaso 2 Yhdistetty_0
+      213: 5803950241535480772
+    second: Pretty in Pink_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Maalitaso 2 Yhdistetty_0
+      name: Pretty in Pink_0
       rect:
         serializedVersion: 2
-        x: 239
-        y: 337
-        width: 522
-        height: 326
+        x: 101
+        y: 3
+        width: 1057
+        height: 408
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b56e948d242878eb0800000000000000
-      internalID: -4717658861039131045
+      spriteID: 4c3d3c87ef5cb8050800000000000000
+      internalID: 5803950241535480772
       vertices: []
       indices: 
       edges: []
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Maalitaso 2 Yhdistetty_0: -4717658861039131045
+      Pretty in Pink_0: 5803950241535480772
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
