@@ -15,7 +15,7 @@ MonoBehaviour:
   lines:
   - speakerId: Mistella
     text: Hey its me its verity
-    expression: ReallyHappy
+    expression: Thinking
     pose: Thinking
     voiceCue: 
     soundEffect: {fileID: 0}
@@ -31,6 +31,12 @@ MonoBehaviour:
     pose: Neutral
     voiceCue: 
     soundEffect: {fileID: 0}
-  choicePrompt: 
-  choices: []
+  choicePrompt: Die
+  choices:
+  - choiceText: No
+    karmaChange: -25
+    nextNode: {fileID: 11400000, guid: 0bf569ac2700c1046afe61b15e27ef0b, type: 2}
+  - choiceText: Yes
+    karmaChange: 25
+    nextNode: {fileID: 11400000, guid: 0bf569ac2700c1046afe61b15e27ef0b, type: 2}
   nextNode: {fileID: 0}

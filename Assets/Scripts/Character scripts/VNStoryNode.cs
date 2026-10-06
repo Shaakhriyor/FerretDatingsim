@@ -11,25 +11,24 @@ public class VNStoryNode : ScriptableObject
     public class DialogueLine
     {
         [Header("Speaker")]
-        [Tooltip("Example: Mistella, MC, Klaus. Leave blank for narration.")]
+        [Tooltip("Example: Mistella. Leave blank for narration.")]
         public string speakerId;
 
         [TextArea(3, 8)]
         public string text;
 
-        [Header("Character Animation")]
-        [Tooltip("Leave blank to keep the current expression.")]
+        [Header("Character")]
+        [Tooltip("Leave blank if expression should stay unchanged.")]
         public string expression;
 
-        [Tooltip("Leave blank to keep the current pose.")]
+        [Tooltip("Leave blank if pose should stay unchanged.")]
         public string pose;
 
-        [Header("Optional Character Voice")]
-        [Tooltip("Example: Hmph, Laugh, Sigh. Leave blank for no voice sound.")]
+        [Header("Optional Character Sound")]
+        [Tooltip("Example: Hmph, Laugh, Sigh. Leave blank for silence.")]
         public string voiceCue;
 
-        [Header("Optional Sound Effect")]
-        [Tooltip("Non-character SFX such as a phone ring, glass, door, etc.")]
+        [Header("Optional SFX")]
         public AudioClip soundEffect;
     }
 
@@ -39,22 +38,23 @@ public class VNStoryNode : ScriptableObject
         [TextArea(2, 4)]
         public string choiceText;
 
-        [Tooltip("Story node that begins after selecting this choice.")]
+        [Header("Karma")]
+        [Tooltip("Positive = karma rises. Negative = karma falls.")]
+        public int karmaChange;
+
+        [Header("Branch")]
         public VNStoryNode nextNode;
     }
 
-    [Header("Dialogue Lines")]
+    [Header("Dialogue")]
     public List<DialogueLine> lines = new();
 
     [Header("Choices")]
     [TextArea(1, 3)]
-    public string choicePrompt;
+    public string choicePrompt = "What should I say?";
 
     public List<Choice> choices = new();
 
-    [Header("Automatic Continuation")]
-    [Tooltip(
-        "If this node has no choices, automatically continue to this node. " +
-        "Leave empty to end the conversation.")]
+    [Header("Continue Without Choice")]
     public VNStoryNode nextNode;
 }

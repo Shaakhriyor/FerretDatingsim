@@ -24,12 +24,10 @@ public class VNDialogueSpeaker : MonoBehaviour
     [SerializeField] private Color nameColor = Color.white;
     [SerializeField] private Color dialogueColor = Color.white;
 
-    [Header("Optional Character Controller")]
-    [Tooltip("Assign VNCharacter only if this speaker has a visible animated character.")]
+    [Header("Character Controller")]
     [SerializeField] private VNCharacter characterController;
 
     [Header("Optional Voice Cues")]
-    [Tooltip("Named character sounds such as Hmph, Laugh, Sigh, Gasp.")]
     [SerializeField] private List<VoiceCue> voiceCues = new();
 
     public string SpeakerId => speakerId;
@@ -40,8 +38,6 @@ public class VNDialogueSpeaker : MonoBehaviour
 
     public Color NameColor => nameColor;
     public Color DialogueColor => dialogueColor;
-
-    public VNCharacter CharacterController => characterController;
 
     private void Reset()
     {
@@ -96,10 +92,6 @@ public class VNDialogueSpeaker : MonoBehaviour
                 return cue.clip;
             }
         }
-
-        Debug.LogWarning(
-            $"{displayName} has no voice cue called '{cueName}'.",
-            this);
 
         return null;
     }

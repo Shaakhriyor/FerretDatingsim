@@ -17,32 +17,32 @@ public class VNDialogueManager : MonoBehaviour
     [SerializeField] private GameObject continueIndicator;
 
     [Header("Narration")]
-    [Tooltip("Font used when Speaker ID is left blank.")]
     [SerializeField] private TMP_FontAsset narratorFont;
-
     [SerializeField] private Color narratorColor = Color.white;
 
     [Header("Choice UI")]
     [SerializeField] private GameObject choicePanel;
-    [SerializeField] private TMP_Text choicePromptText;
     [SerializeField] private Transform choiceButtonContainer;
     [SerializeField] private Button choiceButtonPrefab;
 
     [Header("Typewriter")]
-    [Tooltip("Seconds between letters. 0.03 is a good starting point.")]
     [SerializeField] private float typingSpeed = 0.03f;
-
-    [Tooltip("Extra pause after punctuation.")]
     [SerializeField] private float punctuationPause = 0.06f;
 
+    [Header("Typing Bubble Sound")]
+    [SerializeField] private AudioClip letterBubbleSound;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float letterBubbleVolume = 0.4f;
+
     [Header("Audio")]
+    [SerializeField] private AudioSource typingAudioSource;
     [SerializeField] private AudioSource voiceAudioSource;
     [SerializeField] private AudioSource soundEffectAudioSource;
 
-    [Tooltip("Optional sound when selecting a choice.")]
     [SerializeField] private AudioClip choiceSelectSound;
 
-    [Header("Testing / Starting Story")]
+    [Header("Testing")]
     [SerializeField] private VNStoryNode startingNode;
     [SerializeField] private bool playStartingNodeOnStart = true;
 
@@ -60,9 +60,6 @@ public class VNDialogueManager : MonoBehaviour
     private bool dialogueIsRunning;
 
     private string currentFullText = "";
-
-    public bool DialogueIsRunning => dialogueIsRunning;
-    public bool IsTyping => isTyping;
 
     private void Awake()
     {
@@ -117,13 +114,7 @@ public class VNDialogueManager : MonoBehaviour
     public void StartDialogue(VNStoryNode node)
     {
         if (node == null)
-        {
-            Debug.LogWarning(
-                "Tried to start a null VNStoryNode.",
-                this);
-
             return;
-        }
 
         RegisterSpeakers();
 
@@ -161,8 +152,6 @@ public class VNDialogueManager : MonoBehaviour
         dialogueIsRunning = false;
         choicesAreShowing = false;
 
-        currentFullText = "";
-
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
 
@@ -171,7 +160,7 @@ public class VNDialogueManager : MonoBehaviour
     }
 
     // =========================================================
-    // LINE ADVANCEMENT
+    // LINES
     // =========================================================
 
     private void Advance()
@@ -201,18 +190,6 @@ public class VNDialogueManager : MonoBehaviour
 
     private void ShowCurrentLine()
     {
-        if (currentNode == null)
-            return;
-
-        if (currentLineIndex < 0 ||
-            currentLineIndex >= currentNode.lines.Count)
-        {
-            ResolveEndOfNode();
-            return;
-        }
-
-        StopTyping();
-
         VNStoryNode.DialogueLine line =
             currentNode.lines[currentLineIndex];
 
@@ -220,8 +197,7 @@ public class VNDialogueManager : MonoBehaviour
 
         PlayLineAudio(line);
 
-        currentFullText =
-            line.text ?? "";
+        currentFullText = line.text ?? "";
 
         typingCoroutine =
             StartCoroutine(
@@ -229,7 +205,7 @@ public class VNDialogueManager : MonoBehaviour
     }
 
     // =========================================================
-    // SPEAKER / CHARACTER
+    // SPEAKERS
     // =========================================================
 
     private void ConfigureSpeaker(
@@ -247,14 +223,7 @@ public class VNDialogueManager : MonoBehaviour
         if (speaker == null)
         {
             Debug.LogWarning(
-                $"Could not find speaker ID '{line.speakerId}'.",
-                currentNode);
-
-            if (speakerNameText != null)
-            {
-                speakerNameText.gameObject.SetActive(true);
-                speakerNameText.text = line.speakerId;
-            }
+                $"Speaker '{line.speakerId}' was not found.");
 
             return;
         }
@@ -266,35 +235,25 @@ public class VNDialogueManager : MonoBehaviour
             speakerNameText.color = speaker.NameColor;
 
             if (speaker.NameFont != null)
-            {
-                speakerNameText.font =
-                    speaker.NameFont;
-            }
+                speakerNameText.font = speaker.NameFont;
         }
 
         if (dialogueText != null)
         {
-            dialogueText.color =
-                speaker.DialogueColor;
+            dialogueText.color = speaker.DialogueColor;
 
             if (speaker.DialogueFont != null)
-            {
-                dialogueText.font =
-                    speaker.DialogueFont;
-            }
+                dialogueText.font = speaker.DialogueFont;
         }
 
-        // Blank means "do not change it".
         if (!string.IsNullOrWhiteSpace(line.expression))
         {
-            speaker.ApplyExpression(
-                line.expression);
+            speaker.ApplyExpression(line.expression);
         }
 
         if (!string.IsNullOrWhiteSpace(line.pose))
         {
-            speaker.ApplyPose(
-                line.pose);
+            speaker.ApplyPose(line.pose);
         }
     }
 
@@ -307,14 +266,10 @@ public class VNDialogueManager : MonoBehaviour
 
         if (dialogueText != null)
         {
-            dialogueText.color =
-                narratorColor;
+            dialogueText.color = narratorColor;
 
             if (narratorFont != null)
-            {
-                dialogueText.font =
-                    narratorFont;
-            }
+                dialogueText.font = narratorFont;
         }
     }
 
@@ -322,8 +277,7 @@ public class VNDialogueManager : MonoBehaviour
     // TYPEWRITER
     // =========================================================
 
-    private IEnumerator TypeCurrentLine(
-        string fullText)
+    private IEnumerator TypeCurrentLine(string fullText)
     {
         isTyping = true;
 
@@ -331,7 +285,6 @@ public class VNDialogueManager : MonoBehaviour
             continueIndicator.SetActive(false);
 
         dialogueText.text = fullText;
-
         dialogueText.maxVisibleCharacters = 0;
 
         dialogueText.ForceMeshUpdate();
@@ -341,13 +294,14 @@ public class VNDialogueManager : MonoBehaviour
 
         for (int i = 0; i < characterCount; i++)
         {
-            dialogueText.maxVisibleCharacters =
-                i + 1;
+            dialogueText.maxVisibleCharacters = i + 1;
 
             char character =
                 dialogueText.textInfo
                     .characterInfo[i]
                     .character;
+
+            PlayLetterSound(character);
 
             float delay =
                 Mathf.Max(0f, typingSpeed);
@@ -355,9 +309,7 @@ public class VNDialogueManager : MonoBehaviour
             if (IsPunctuation(character))
             {
                 delay +=
-                    Mathf.Max(
-                        0f,
-                        punctuationPause);
+                    Mathf.Max(0f, punctuationPause);
             }
 
             if (delay > 0f)
@@ -381,6 +333,22 @@ public class VNDialogueManager : MonoBehaviour
             continueIndicator.SetActive(true);
     }
 
+    private void PlayLetterSound(char character)
+    {
+        if (letterBubbleSound == null ||
+            typingAudioSource == null)
+        {
+            return;
+        }
+
+        if (!char.IsLetterOrDigit(character))
+            return;
+
+        typingAudioSource.PlayOneShot(
+            letterBubbleSound,
+            letterBubbleVolume);
+    }
+
     private bool IsPunctuation(char character)
     {
         return character == '.' ||
@@ -393,9 +361,6 @@ public class VNDialogueManager : MonoBehaviour
 
     private void FinishCurrentLineImmediately()
     {
-        if (!isTyping)
-            return;
-
         StopTyping();
 
         dialogueText.text =
@@ -403,8 +368,6 @@ public class VNDialogueManager : MonoBehaviour
 
         dialogueText.maxVisibleCharacters =
             int.MaxValue;
-
-        isTyping = false;
 
         if (continueIndicator != null)
             continueIndicator.SetActive(true);
@@ -428,7 +391,6 @@ public class VNDialogueManager : MonoBehaviour
     private void PlayLineAudio(
         VNStoryNode.DialogueLine line)
     {
-        // Voice cue only plays if YOU entered one.
         if (!string.IsNullOrWhiteSpace(
             line.voiceCue))
         {
@@ -441,19 +403,15 @@ public class VNDialogueManager : MonoBehaviour
                     speaker.GetVoiceCue(
                         line.voiceCue);
 
-                if (clip != null &&
-                    voiceAudioSource != null)
+                if (clip != null)
                 {
-                    voiceAudioSource.Stop();
                     voiceAudioSource.PlayOneShot(
                         clip);
                 }
             }
         }
 
-        // Completely separate from character voice.
-        if (line.soundEffect != null &&
-            soundEffectAudioSource != null)
+        if (line.soundEffect != null)
         {
             soundEffectAudioSource.PlayOneShot(
                 line.soundEffect);
@@ -461,7 +419,7 @@ public class VNDialogueManager : MonoBehaviour
     }
 
     // =========================================================
-    // NODE END / CHOICES
+    // NODE / CHOICES
     // =========================================================
 
     private void ResolveEndOfNode()
@@ -481,9 +439,7 @@ public class VNDialogueManager : MonoBehaviour
 
         if (currentNode.nextNode != null)
         {
-            StartDialogue(
-                currentNode.nextNode);
-
+            StartDialogue(currentNode.nextNode);
             return;
         }
 
@@ -497,35 +453,33 @@ public class VNDialogueManager : MonoBehaviour
             choiceButtonPrefab == null)
         {
             Debug.LogError(
-                "Choice UI is not fully assigned on VNDialogueManager.",
-                this);
+                "Choice UI is not completely assigned.");
 
             return;
         }
 
         choicesAreShowing = true;
 
-        if (continueIndicator != null)
-            continueIndicator.SetActive(false);
-
         ClearChoiceButtons();
 
         choicePanel.SetActive(true);
 
-        if (choicePromptText != null)
+        if (continueIndicator != null)
+            continueIndicator.SetActive(false);
+
+        // Put the prompt in the NORMAL dialogue box.
+        if (dialogueText != null)
         {
-            bool hasPrompt =
-                !string.IsNullOrWhiteSpace(
-                    currentNode.choicePrompt);
+            dialogueText.text =
+                currentNode.choicePrompt;
 
-            choicePromptText.gameObject.SetActive(
-                hasPrompt);
+            dialogueText.maxVisibleCharacters =
+                int.MaxValue;
+        }
 
-            if (hasPrompt)
-            {
-                choicePromptText.text =
-                    currentNode.choicePrompt;
-            }
+        if (speakerNameText != null)
+        {
+            speakerNameText.gameObject.SetActive(false);
         }
 
         foreach (VNStoryNode.Choice choice in
@@ -552,30 +506,30 @@ public class VNDialogueManager : MonoBehaviour
             button.onClick.RemoveAllListeners();
 
             button.onClick.AddListener(
-                () =>
-                {
-                    SelectChoice(
-                        capturedChoice);
-                });
+                () => SelectChoice(capturedChoice));
         }
     }
 
     private void SelectChoice(
         VNStoryNode.Choice choice)
     {
-        if (choiceSelectSound != null &&
-            soundEffectAudioSource != null)
+        if (choiceSelectSound != null)
         {
             soundEffectAudioSource.PlayOneShot(
                 choiceSelectSound);
+        }
+
+        if (KarmaManager.Instance != null)
+        {
+            KarmaManager.Instance.AdjustKarma(
+                choice.karmaChange);
         }
 
         HideChoices();
 
         if (choice.nextNode != null)
         {
-            StartDialogue(
-                choice.nextNode);
+            StartDialogue(choice.nextNode);
         }
         else
         {
@@ -590,9 +544,7 @@ public class VNDialogueManager : MonoBehaviour
         ClearChoiceButtons();
 
         if (choicePanel != null)
-        {
             choicePanel.SetActive(false);
-        }
     }
 
     private void ClearChoiceButtons()
@@ -613,20 +565,19 @@ public class VNDialogueManager : MonoBehaviour
     }
 
     // =========================================================
-    // SPEAKERS
+    // SPEAKER REGISTRY
     // =========================================================
 
     private void RegisterSpeakers()
     {
         speakers.Clear();
 
-        VNDialogueSpeaker[] foundSpeakers =
+        VNDialogueSpeaker[] found =
             FindObjectsByType<VNDialogueSpeaker>(
                 FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
 
-        foreach (VNDialogueSpeaker speaker in
-                 foundSpeakers)
+        foreach (VNDialogueSpeaker speaker in found)
         {
             if (speaker == null)
                 continue;
@@ -637,19 +588,8 @@ public class VNDialogueManager : MonoBehaviour
                 continue;
             }
 
-            if (speakers.ContainsKey(
-                speaker.SpeakerId))
-            {
-                Debug.LogWarning(
-                    $"Duplicate Speaker ID '{speaker.SpeakerId}'.",
-                    speaker);
-
-                continue;
-            }
-
-            speakers.Add(
-                speaker.SpeakerId,
-                speaker);
+            speakers[speaker.SpeakerId] =
+                speaker;
         }
     }
 
@@ -706,17 +646,26 @@ public class VNDialogueManager : MonoBehaviour
     }
 
     // =========================================================
-    // AUDIO SETUP
+    // AUDIO SOURCES
     // =========================================================
 
     private void SetupAudioSources()
     {
+        if (typingAudioSource == null)
+        {
+            typingAudioSource =
+                gameObject.AddComponent<AudioSource>();
+
+            ConfigureAudioSource(
+                typingAudioSource);
+        }
+
         if (voiceAudioSource == null)
         {
             voiceAudioSource =
                 gameObject.AddComponent<AudioSource>();
 
-            Configure2DAudioSource(
+            ConfigureAudioSource(
                 voiceAudioSource);
         }
 
@@ -725,12 +674,12 @@ public class VNDialogueManager : MonoBehaviour
             soundEffectAudioSource =
                 gameObject.AddComponent<AudioSource>();
 
-            Configure2DAudioSource(
+            ConfigureAudioSource(
                 soundEffectAudioSource);
         }
     }
 
-    private void Configure2DAudioSource(
+    private void ConfigureAudioSource(
         AudioSource source)
     {
         source.playOnAwake = false;
