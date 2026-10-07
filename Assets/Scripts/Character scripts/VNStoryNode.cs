@@ -17,6 +17,10 @@ public class VNStoryNode : ScriptableObject
         [TextArea(3, 8)]
         public string text;
 
+        [Header("Scene Picture")]
+        [Tooltip("Optional: change the full-scene picture when this line begins. Leave empty to keep the previous picture.")]
+        public Sprite scenePicture;
+
         [Header("Character")]
         [Tooltip("Leave blank if expression should stay unchanged.")]
         public string expression;

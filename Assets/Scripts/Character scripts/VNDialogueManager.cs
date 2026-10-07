@@ -16,6 +16,10 @@ public class VNDialogueManager : MonoBehaviour
     [SerializeField] private TMP_Text dialogueText;
     [SerializeField] private GameObject continueIndicator;
 
+    [Header("Scene Picture")]
+    [Tooltip("Assign the full-scene UI Image behind the dialogue box.")]
+    [SerializeField] private UnityEngine.UI.Image scenePictureImage;
+
     [Header("Narration")]
     [SerializeField] private TMP_FontAsset narratorFont;
     [SerializeField] private Color narratorColor = Color.white;
@@ -192,6 +196,12 @@ public class VNDialogueManager : MonoBehaviour
     {
         VNStoryNode.DialogueLine line =
             currentNode.lines[currentLineIndex];
+
+        // Empty picture fields keep the picture from the previous line.
+        if (line.scenePicture != null && scenePictureImage != null)
+        {
+            scenePictureImage.sprite = line.scenePicture;
+        }
 
         ConfigureSpeaker(line);
 
