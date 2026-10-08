@@ -11,18 +11,18 @@ public class VNStoryNode : ScriptableObject
     public class DialogueLine
     {
         [Header("Speaker")]
-        [Tooltip("Example: Mistella. Leave blank for narration.")]
+        [Tooltip("Use MC for the player. Leave blank for narration.")]
         public string speakerId;
 
         [TextArea(3, 8)]
         public string text;
 
         [Header("Scene Picture")]
-        [Tooltip("Optional: change the full-scene picture when this line begins. Leave empty to keep the previous picture.")]
+        [Tooltip("Change the picture when this line begins. Leave empty to keep the previous picture.")]
         public Sprite scenePicture;
 
         [Header("Picture Fade")]
-        [Tooltip("Fade the full-scene picture to black when this line starts. Dialogue stays visible.")]
+        [Tooltip("Fade the scene picture to black when this line starts. Dialogue stays visible.")]
         public bool fadeToBlack;
 
         [Min(0f)]
@@ -30,14 +30,14 @@ public class VNStoryNode : ScriptableObject
         public float fadeDuration = 1.5f;
 
         [Header("Doctor Intro")]
-        [Tooltip("Start fading out the doctor's ringing and whole-screen blur when this line appears.")]
+        [Tooltip("Start fading out the ringing and whole-screen blur when this line appears.")]
         public bool endDoctorIntro;
 
         [Header("Character")]
-        [Tooltip("Leave blank if expression should stay unchanged.")]
+        [Tooltip("Leave blank to keep the current expression.")]
         public string expression;
 
-        [Tooltip("Leave blank if pose should stay unchanged.")]
+        [Tooltip("Leave blank to keep the current pose.")]
         public string pose;
 
         [Header("Optional Character Sound")]
@@ -45,17 +45,15 @@ public class VNStoryNode : ScriptableObject
         public string voiceCue;
 
         [Range(0f, 1f)]
-        [Tooltip("Volume for this line's voice cue: 0 = silent, 1 = normal full volume.")]
         public float voiceCueVolume = 1f;
 
         [Header("Optional SFX")]
         public AudioClip soundEffect;
 
         [Range(0f, 1f)]
-        [Tooltip("Volume for this line's sound effect: 0 = silent, 1 = normal full volume.")]
         public float soundEffectVolume = 1f;
 
-        [Tooltip("Tick for spoken audio placed in Sound Effect: stop it when leaving this line. Voice Cues always stop automatically.")]
+        [Tooltip("Stop this line's sound effect when advancing. Voice cues always stop automatically.")]
         public bool stopSoundEffectOnAdvance;
     }
 
@@ -66,7 +64,7 @@ public class VNStoryNode : ScriptableObject
         public string choiceText;
 
         [Header("Karma")]
-        [Tooltip("Positive = karma rises. Negative = karma falls.")]
+        [Tooltip("Positive raises karma. Negative lowers it.")]
         public int karmaChange;
 
         [Header("Branch")]
@@ -84,4 +82,11 @@ public class VNStoryNode : ScriptableObject
 
     [Header("Continue Without Choice")]
     public VNStoryNode nextNode;
+
+    [Header("Scene After This Branch")]
+    [Tooltip("Use this node's scene destination instead of the dialogue manager's. Choices and Next Node still take priority.")]
+    public bool overrideNextScene;
+
+    [Tooltip("Used when Override Next Scene is checked. Enter a Unity scene name, or leave empty to finish here.")]
+    public string nextSceneName;
 }

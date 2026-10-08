@@ -37,8 +37,12 @@ public class VNHeartMenu : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Button confirmButton;
     [SerializeField] private UnityEngine.UI.Button cancelButton;
     [SerializeField] private float transitionDuration = 0.24f;
+    [Header("Main Menu Use")]
+    [Tooltip("Enable ONLY on the menu copy in MAINMENU. Shows Load, hides the in-game toolbar, and returns directly to the main menu on Back/Esc.")]
+    [SerializeField] private bool usedOnMainMenu;
     private readonly List<Texture2D> thumbnails = new List<Texture2D>();
     private bool open;
+    public bool IsOpen => open;
     private bool busy;
     private bool pauseApplied;
     private float oldTimeScale;
@@ -62,7 +66,7 @@ public class VNHeartMenu : MonoBehaviour
         foreach (var button in saveButtons) button.onClick.AddListener(OpenSave);
         foreach (var button in loadButtons) button.onClick.AddListener(OpenLoad);
         resumeButton.onClick.AddListener(Close);
-        backButton.onClick.AddListener(OpenMain);
+        backButton.onClick.AddListener(GoBack);
         cancelButton.onClick.AddListener(CancelConfirmation);
         confirmButton.onClick.AddListener(Confirm);
         for (int i = 0; i < slots.Length; i++)
@@ -75,14 +79,33 @@ public class VNHeartMenu : MonoBehaviour
             rightClick.Configure(this, index);
         }
         for (int i = 0; i < pageButtons.Length; i++) { int index = i; pageButtons[i].onClick.AddListener(() => ChangePage(index)); }
+        if (usedOnMainMenu)
+        {
+            HideToolbar(menuButtons);
+            HideToolbar(saveButtons);
+            HideToolbar(loadButtons);
+        }
+    }
+
+    private void HideToolbar(UnityEngine.UI.Button[] buttons)
+    {
+        foreach (var button in buttons)
+            if (button != null && !button.transform.IsChildOf(overlay.transform)) button.gameObject.SetActive(false);
+    }
+
+    private void GoBack()
+    {
+        if (usedOnMainMenu) Close();
+        else OpenMain();
     }
 
     private void Update()
     {
         if (VNSceneTransition.IsBusy) return;
         if (busy || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
-        if (!open) OpenMain();
+        if (!open) { if (!usedOnMainMenu) OpenMain(); }
         else if (confirmation.activeSelf) CancelConfirmation();
+        else if (usedOnMainMenu) Close();
         else if (page != Page.Main) OpenMain();
         else Close();
     }
@@ -93,6 +116,7 @@ public class VNHeartMenu : MonoBehaviour
     private void RequestPage(Page requested)
     {
         if (VNSceneTransition.IsBusy) return;
+        if (usedOnMainMenu && requested != Page.Load) return;
         if (busy || !isActiveAndEnabled) return;
         if (open) StartCoroutine(ChangeView(requested));
         else StartCoroutine(OpenRoutine(requested));
@@ -107,7 +131,7 @@ public class VNHeartMenu : MonoBehaviour
         snapshot = null;
         thumbnailPng = "";
         dialogue = VNDialogueManager.Instance;
-        try { snapshot = VNSaveSystem.Capture(dialogue); }
+        try { if (!usedOnMainMenu) snapshot = VNSaveSystem.Capture(dialogue); }
         catch (Exception error) { status.text = error.Message; Debug.LogWarning(error.Message); }
         oldTimeScale = Time.timeScale;
         oldAudioPause = AudioListener.pause;

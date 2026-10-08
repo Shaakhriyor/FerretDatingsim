@@ -14,11 +14,23 @@ public sealed class VNSceneTransition : MonoBehaviour
     private bool hasKarma;
     private int karma;
     private string target;
+    private bool newGame;
+    private string newPlayerName;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetForPlay() { active = null; }
 
     public static bool TryBegin(string sceneName, float fadeSeconds)
+    {
+        return Begin(sceneName, fadeSeconds, false, null, 0);
+    }
+
+    public static bool TryBeginNewGame(string sceneName, float fadeSeconds, string playerName, int startingKarma)
+    {
+        return Begin(sceneName, fadeSeconds, true, playerName, startingKarma);
+    }
+
+    private static bool Begin(string sceneName, float fadeSeconds, bool startFresh, string playerName, int startingKarma)
     {
         if (IsBusy) return false;
         sceneName = (sceneName ?? "").Trim();
@@ -40,8 +52,11 @@ public sealed class VNSceneTransition : MonoBehaviour
         DontDestroyOnLoad(root);
         active = root.AddComponent<VNSceneTransition>();
         active.target = sceneName;
-        active.hasKarma = KarmaManager.Instance != null;
-        if (active.hasKarma) active.karma = KarmaManager.Instance.CurrentKarma;
+        active.newGame = startFresh;
+        active.newPlayerName = playerName;
+        active.hasKarma = startFresh || KarmaManager.Instance != null;
+        if (startFresh) active.karma = startingKarma;
+        else if (active.hasKarma) active.karma = KarmaManager.Instance.CurrentKarma;
         active.previousVolume = AudioListener.volume;
         active.ownsVolume = true;
         active.StartCoroutine(active.Run(Mathf.Max(0f, fadeSeconds)));
@@ -74,6 +89,13 @@ public sealed class VNSceneTransition : MonoBehaviour
         if (!string.Equals(scene.name, target, StringComparison.OrdinalIgnoreCase) &&
             !string.Equals(scene.path, target, StringComparison.OrdinalIgnoreCase)) return;
         // sceneLoaded runs after the new scene's Awake calls and before Start.
+        // Commit a fresh playthrough only after the destination actually loads.
+        if (newGame)
+        {
+            VNSaveSystem.ResetForNewGame(newPlayerName);
+            Time.timeScale = 1f;
+            AudioListener.pause = false;
+        }
         if (hasKarma)
         {
             if (KarmaManager.Instance != null) KarmaManager.Instance.SetKarma(karma);
