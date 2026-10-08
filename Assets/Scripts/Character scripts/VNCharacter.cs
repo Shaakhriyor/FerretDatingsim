@@ -64,6 +64,57 @@ public class VNCharacter : MonoBehaviour
     [SerializeField] private string testPose = "Neutral";
 
     private Coroutine poseCoroutine;
+    private string saveTargetPose = "";
+
+    public VNCharacterSnapshot CaptureSave(string key)
+    {
+        var state = new VNCharacterSnapshot
+        {
+            key = key,
+            position = transform.localPosition,
+            rotation = transform.localEulerAngles,
+            scale = transform.localScale,
+            active = gameObject.activeSelf,
+            targetPose = saveTargetPose,
+            moving = poseCoroutine != null
+        };
+        foreach (var expression in expressions)
+            if (expression != null && expression.expressionObject != null && expression.expressionObject.activeSelf)
+            { state.expression = expression.expressionName; break; }
+        foreach (var part in movableParts)
+            if (part != null && part.target != null)
+                state.parts.Add(new SavedPartPose
+                {
+                    partId = part.partId,
+                    localPosition = part.target.localPosition,
+                    localEulerAngles = part.target.localEulerAngles,
+                    localScale = part.target.localScale
+                });
+        return state;
+    }
+
+    public void RestoreSave(VNCharacterSnapshot state)
+    {
+        if (poseCoroutine != null) StopCoroutine(poseCoroutine);
+        poseCoroutine = null;
+        transform.localPosition = state.position;
+        transform.localEulerAngles = state.rotation;
+        transform.localScale = state.scale;
+        gameObject.SetActive(state.active);
+        foreach (var expression in expressions)
+            if (expression != null && expression.expressionObject != null)
+                expression.expressionObject.SetActive(string.Equals(expression.expressionName, state.expression, StringComparison.OrdinalIgnoreCase));
+        if (state.parts != null) foreach (var part in state.parts)
+            {
+                var live = FindMovablePart(part.partId);
+                if (live == null || live.target == null) continue;
+                live.target.localPosition = part.localPosition;
+                live.target.localEulerAngles = part.localEulerAngles;
+                live.target.localScale = part.localScale;
+            }
+        saveTargetPose = state.targetPose;
+        if (state.moving && isActiveAndEnabled && !string.IsNullOrEmpty(state.targetPose)) SetPose(state.targetPose);
+    }
 
     public string CharacterName => characterName;
 
@@ -132,6 +183,8 @@ public class VNCharacter : MonoBehaviour
 
             return;
         }
+
+        saveTargetPose = poseName;
 
         // In Edit Mode coroutines cannot animate normally,
         // so just apply the pose instantly.

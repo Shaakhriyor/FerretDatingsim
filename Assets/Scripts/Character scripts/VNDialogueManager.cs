@@ -65,6 +65,18 @@ public class VNDialogueManager : MonoBehaviour
 
     private string currentFullText = "";
 
+    public bool IsPaused { get; private set; }
+    private int resumeInputBlockedThroughFrame = -1;
+    private readonly List<UnityEngine.EventSystems.RaycastResult> uiHits =
+        new List<UnityEngine.EventSystems.RaycastResult>();
+
+    public void SetPaused(bool paused)
+    {
+        IsPaused = paused;
+        if (!paused)
+            resumeInputBlockedThroughFrame = Time.frameCount + 1;
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -90,6 +102,8 @@ public class VNDialogueManager : MonoBehaviour
 
     private void Start()
     {
+        if (VNSaveSystem.TryRestorePending(this)) return;
+
         if (playStartingNodeOnStart &&
             startingNode != null)
         {
@@ -99,7 +113,7 @@ public class VNDialogueManager : MonoBehaviour
 
     private void Update()
     {
-        if (!dialogueIsRunning)
+        if (IsPaused || Time.frameCount <= resumeInputBlockedThroughFrame || !dialogueIsRunning)
             return;
 
         if (choicesAreShowing)
@@ -207,7 +221,7 @@ public class VNDialogueManager : MonoBehaviour
 
         PlayLineAudio(line);
 
-        currentFullText = line.text ?? "";
+        currentFullText = VNSaveSystem.Format(line.text);
 
         typingCoroutine =
             StartCoroutine(
@@ -219,7 +233,7 @@ public class VNDialogueManager : MonoBehaviour
     // =========================================================
 
     private void ConfigureSpeaker(
-        VNStoryNode.DialogueLine line)
+        VNStoryNode.DialogueLine line, bool applyCharacter = true)
     {
         if (string.IsNullOrWhiteSpace(line.speakerId))
         {
@@ -241,7 +255,7 @@ public class VNDialogueManager : MonoBehaviour
         if (speakerNameText != null)
         {
             speakerNameText.gameObject.SetActive(true);
-            speakerNameText.text = speaker.DisplayName;
+            speakerNameText.text = string.Equals(line.speakerId, "MC", StringComparison.OrdinalIgnoreCase) ? VNSaveSystem.Format("{playerName}") : speaker.DisplayName;
             speakerNameText.color = speaker.NameColor;
 
             if (speaker.NameFont != null)
@@ -256,12 +270,12 @@ public class VNDialogueManager : MonoBehaviour
                 dialogueText.font = speaker.DialogueFont;
         }
 
-        if (!string.IsNullOrWhiteSpace(line.expression))
+        if (applyCharacter && !string.IsNullOrWhiteSpace(line.expression))
         {
             speaker.ApplyExpression(line.expression);
         }
 
-        if (!string.IsNullOrWhiteSpace(line.pose))
+        if (applyCharacter && !string.IsNullOrWhiteSpace(line.pose))
         {
             speaker.ApplyPose(line.pose);
         }
@@ -287,7 +301,7 @@ public class VNDialogueManager : MonoBehaviour
     // TYPEWRITER
     // =========================================================
 
-    private IEnumerator TypeCurrentLine(string fullText)
+    private IEnumerator TypeCurrentLine(string fullText, int startVisible = 0)
     {
         isTyping = true;
 
@@ -295,15 +309,18 @@ public class VNDialogueManager : MonoBehaviour
             continueIndicator.SetActive(false);
 
         dialogueText.text = fullText;
-        dialogueText.maxVisibleCharacters = 0;
+        dialogueText.maxVisibleCharacters = startVisible;
 
         dialogueText.ForceMeshUpdate();
 
         int characterCount =
             dialogueText.textInfo.characterCount;
 
-        for (int i = 0; i < characterCount; i++)
+        for (int i = Mathf.Clamp(startVisible, 0, characterCount); i < characterCount; i++)
         {
+            while (IsPaused)
+                yield return null;
+
             dialogueText.maxVisibleCharacters = i + 1;
 
             char character =
@@ -324,14 +341,22 @@ public class VNDialogueManager : MonoBehaviour
 
             if (delay > 0f)
             {
-                yield return
-                    new WaitForSecondsRealtime(delay);
+                float elapsed = 0f;
+                while (elapsed < delay)
+                {
+                    yield return null;
+                    if (!IsPaused)
+                        elapsed += Time.unscaledDeltaTime;
+                }
             }
             else
             {
                 yield return null;
             }
         }
+
+        while (IsPaused)
+            yield return null;
 
         dialogueText.maxVisibleCharacters =
             int.MaxValue;
@@ -481,7 +506,7 @@ public class VNDialogueManager : MonoBehaviour
         if (dialogueText != null)
         {
             dialogueText.text =
-                currentNode.choicePrompt;
+                VNSaveSystem.Format(currentNode.choicePrompt);
 
             dialogueText.maxVisibleCharacters =
                 int.MaxValue;
@@ -510,7 +535,7 @@ public class VNDialogueManager : MonoBehaviour
             if (buttonText != null)
             {
                 buttonText.text =
-                    capturedChoice.choiceText;
+                    VNSaveSystem.Format(capturedChoice.choiceText);
             }
 
             button.onClick.RemoveAllListeners();
@@ -523,6 +548,11 @@ public class VNDialogueManager : MonoBehaviour
     private void SelectChoice(
         VNStoryNode.Choice choice)
     {
+        if (IsPaused || !choicesAreShowing || choice == null)
+            return;
+
+        VNSaveSystem.RecordChoice(currentNode, currentNode.choices.IndexOf(choice));
+
         if (choiceSelectSound != null)
         {
             soundEffectAudioSource.PlayOneShot(
@@ -623,12 +653,33 @@ public class VNDialogueManager : MonoBehaviour
     // INPUT
     // =========================================================
 
+    private bool PointerIsOverControl()
+    {
+        UnityEngine.EventSystems.EventSystem events = UnityEngine.EventSystems.EventSystem.current;
+        if (events == null || Mouse.current == null)
+            return false;
+
+        // Use this frame's pointer position, including on a button's first click.
+        var pointer = new UnityEngine.EventSystems.PointerEventData(events);
+        pointer.position = Mouse.current.position.ReadValue();
+        uiHits.Clear();
+        events.RaycastAll(pointer, uiHits);
+        foreach (var hit in uiHits)
+        {
+            if (hit.gameObject != null &&
+                hit.gameObject.GetComponentInParent<UnityEngine.UI.Selectable>() != null)
+                return true;
+        }
+        return false;
+    }
+
     private bool AdvancePressed()
     {
         bool mouse =
             Mouse.current != null &&
             Mouse.current.leftButton
-                .wasPressedThisFrame;
+                .wasPressedThisFrame &&
+            !PointerIsOverControl();
 
         bool space =
             Keyboard.current != null &&
@@ -658,6 +709,71 @@ public class VNDialogueManager : MonoBehaviour
     // =========================================================
     // AUDIO SOURCES
     // =========================================================
+
+    public VNSaveData CaptureSave(VNSaveCatalog catalog)
+    {
+        return new VNSaveData
+        {
+            nodeId = catalog.Id(currentNode),
+            nodeRevision = VNSaveSystem.NodeRevision(currentNode, catalog),
+            lineIndex = currentLineIndex,
+            running = dialogueIsRunning,
+            choicesShowing = choicesAreShowing,
+            typing = isTyping,
+            visibleCharacters = dialogueText != null ? dialogueText.maxVisibleCharacters : 0,
+            previewText = dialogueText != null && dialogueIsRunning ? dialogueText.text : "Between conversations",
+            pictureId = scenePictureImage != null ? catalog.Id(scenePictureImage.sprite) : "",
+            pictureColor = scenePictureImage != null ? scenePictureImage.color : Color.white,
+            pictureEnabled = scenePictureImage != null && scenePictureImage.enabled
+        };
+    }
+
+    public void RestoreSave(VNSaveData data, VNSaveCatalog catalog)
+    {
+        StopTyping();
+        HideChoices();
+        if (typingAudioSource != null) typingAudioSource.Stop();
+        if (voiceAudioSource != null) voiceAudioSource.Stop();
+        if (soundEffectAudioSource != null) soundEffectAudioSource.Stop();
+        RegisterSpeakers();
+        currentNode = catalog.Resolve<VNStoryNode>(data.nodeId);
+        currentLineIndex = data.lineIndex;
+        dialogueIsRunning = data.running;
+        if (scenePictureImage != null)
+        {
+            scenePictureImage.sprite = catalog.Resolve<Sprite>(data.pictureId);
+            scenePictureImage.color = data.pictureColor;
+            scenePictureImage.enabled = data.pictureEnabled;
+        }
+        if (dialoguePanel != null) dialoguePanel.SetActive(dialogueIsRunning);
+        if (continueIndicator != null) continueIndicator.SetActive(false);
+        resumeInputBlockedThroughFrame = Time.frameCount + 1;
+        if (!dialogueIsRunning) return;
+        if (data.choicesShowing)
+        {
+            ShowNarrationStyle();
+            DisplayChoices();
+            return;
+        }
+        var line = currentNode.lines[currentLineIndex];
+        ConfigureSpeaker(line, false);
+        currentFullText = VNSaveSystem.Format(line.text);
+        if (dialogueText != null)
+        {
+            dialogueText.text = currentFullText;
+            dialogueText.ForceMeshUpdate();
+            int visible = Mathf.Clamp(data.visibleCharacters, 0, dialogueText.textInfo.characterCount);
+            dialogueText.maxVisibleCharacters = data.typing ? visible : int.MaxValue;
+            if (data.typing) typingCoroutine = StartCoroutine(TypeCurrentLine(currentFullText, visible));
+            else if (continueIndicator != null) continueIndicator.SetActive(true);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
 
     private void SetupAudioSources()
     {
