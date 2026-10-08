@@ -16,24 +16,33 @@ public class MenuIntro : MonoBehaviour
     [Header("References - UI Buttons")]
     public CanvasGroup[] menuButtons;
 
-    [Header("References - Audio")]
-    public AudioSource audioSource;
-    public AudioClip shakeRumbleClip; // Plays during closed eyes tremble
-    public AudioClip bamImpactClip;   // Plays right when eyes snap open
-    public AudioClip buttonFadeClip;  // (Optional) Soft chime/whoosh as buttons appear
+    [Header("References - Audio Sources")]
+    public AudioSource mainAudioSource;
+    public AudioSource auraAudioSource;
+
+    [Header("References - Audio Clips")]
+    public AudioClip shakeRiserClip;
+    public AudioClip transitionWhooshClip;
+    public AudioClip bamBoomClip;
+    public AudioClip auraLoopClip;
+    public AudioClip buttonFadeClip;
+
+    [Header("Bam Boom Audio Crop Settings")]
+    public float bamBoomStartTime = 0.5f; // Start playing at X seconds
+    public float bamBoomEndTime = 2.3f;   // Stop playing at Y seconds
 
     [Header("1. Fade In Closed Eyes")]
     public float initialFadeDuration = 3f;
 
     [Header("2. Eye Shake Settings")]
-    public float rampUpDuration = 2f;
+    public float rampUpDuration = 8f;
     public float rampDownDuration = 2.5f;
     public float startIntensity = 1f;
     public float peakIntensity = 18f;
 
     [Header("3. Glow & Blur Effects")]
-    public float maxVignetteAlpha = 0.6f;
-    public float fxSlowFadeDuration = 3.0f;
+    public float maxVignetteAlpha = 0.3f;
+    public float fxSlowFadeDuration = 2.0f;
 
     [Header("4. Button Sequential Fade Settings")]
     public float buttonFadeDuration = 0.8f;
@@ -77,10 +86,10 @@ public class MenuIntro : MonoBehaviour
         eyeColor.a = 1f;
         closedEyes.color = eyeColor;
 
-        // 2. Play Shake Rumble & Ramp-up shake
-        if (audioSource && shakeRumbleClip)
+        // 2. Play Riser + Closed eyes tremble
+        if (mainAudioSource && shakeRiserClip)
         {
-            audioSource.PlayOneShot(shakeRumbleClip);
+            mainAudioSource.PlayOneShot(shakeRiserClip);
         }
 
         Vector2 closedOriginalPos = closedEyes.rectTransform.anchoredPosition;
@@ -95,17 +104,31 @@ public class MenuIntro : MonoBehaviour
         }
         closedEyes.rectTransform.anchoredPosition = closedOriginalPos;
 
-        // 3. BAM! Play Heavy Impact Audio + Swap eyes + Burst glow/blur
-        if (audioSource && bamImpactClip)
+        // 3. Play Transition Whoosh ("sheeew") right before eyes open
+        if (mainAudioSource && transitionWhooshClip)
         {
-            audioSource.PlayOneShot(bamImpactClip);
+            mainAudioSource.PlayOneShot(transitionWhooshClip);
+            yield return new WaitForSeconds(0.12f);
+        }
+
+        // 4. BAM! Play Cropped BOOM + Swap eyes + Burst glow/blur + Start Aura Loop
+        if (mainAudioSource && bamBoomClip)
+        {
+            StartCoroutine(PlayCroppedBoomSound());
+        }
+
+        if (auraAudioSource && auraLoopClip)
+        {
+            auraAudioSource.clip = auraLoopClip;
+            auraAudioSource.loop = true;
+            auraAudioSource.Play();
         }
 
         closedEyes.gameObject.SetActive(false);
         openEyes.SetActive(true);
         StartCoroutine(BurstEffects());
 
-        // 4. Ramp-down shake
+        // 5. Ramp-down shake on open eyes
         if (openEyesRect != null)
         {
             Vector2 openOriginalPos = openEyesRect.anchoredPosition;
@@ -121,11 +144,26 @@ public class MenuIntro : MonoBehaviour
             openEyesRect.anchoredPosition = openOriginalPos;
         }
 
-        // 5. Fade vignette & blur away
+        // 6. Fade vignette & blur away
         StartCoroutine(FadeEffectsAway());
 
-        // 6. Fade in buttons ONE BY ONE
+        // 7. Fade in buttons ONE BY ONE
         yield return StartCoroutine(FadeInButtonsSequentially());
+    }
+
+    IEnumerator PlayCroppedBoomSound()
+    {
+        mainAudioSource.clip = bamBoomClip;
+        mainAudioSource.time = Mathf.Clamp(bamBoomStartTime, 0f, bamBoomClip.length);
+        mainAudioSource.Play();
+
+        float playDuration = Mathf.Max(0f, bamBoomEndTime - bamBoomStartTime);
+        yield return new WaitForSeconds(playDuration);
+
+        if (mainAudioSource.clip == bamBoomClip)
+        {
+            mainAudioSource.Stop();
+        }
     }
 
     IEnumerator FadeInButtonsSequentially()
@@ -134,9 +172,9 @@ public class MenuIntro : MonoBehaviour
         {
             if (btn == null) continue;
 
-            if (audioSource && buttonFadeClip)
+            if (mainAudioSource && buttonFadeClip)
             {
-                audioSource.PlayOneShot(buttonFadeClip);
+                mainAudioSource.PlayOneShot(buttonFadeClip);
             }
 
             float elapsedTime = 0f;
