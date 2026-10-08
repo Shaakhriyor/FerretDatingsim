@@ -24,9 +24,22 @@ public class VNSaveData
     public string pictureId;
     public Color pictureColor = Color.white;
     public bool pictureEnabled;
+    public float pictureFadeSecondsRemaining;
     public List<VNSaveChoice> decisions = new List<VNSaveChoice>();
     public List<VNCharacterSnapshot> characters = new List<VNCharacterSnapshot>();
     public List<VNAudioSnapshot> audio = new List<VNAudioSnapshot>();
+    public List<VNDoctorIntroSnapshot> doctorIntros = new List<VNDoctorIntroSnapshot>();
+}
+
+[Serializable]
+public class VNDoctorIntroSnapshot
+{
+    public string key;
+    public float elapsed, duration, fade, volume, blur;
+    public int samples;
+    public bool playing;
+    public bool waitingForLine;
+    public bool looping;
 }
 
 [Serializable]

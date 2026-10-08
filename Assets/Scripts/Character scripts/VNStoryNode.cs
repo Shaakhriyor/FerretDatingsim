@@ -21,6 +21,18 @@ public class VNStoryNode : ScriptableObject
         [Tooltip("Optional: change the full-scene picture when this line begins. Leave empty to keep the previous picture.")]
         public Sprite scenePicture;
 
+        [Header("Picture Fade")]
+        [Tooltip("Fade the full-scene picture to black when this line starts. Dialogue stays visible.")]
+        public bool fadeToBlack;
+
+        [Min(0f)]
+        [Tooltip("Fade duration in seconds. Zero cuts immediately to black.")]
+        public float fadeDuration = 1.5f;
+
+        [Header("Doctor Intro")]
+        [Tooltip("Start fading out the doctor's ringing and whole-screen blur when this line appears.")]
+        public bool endDoctorIntro;
+
         [Header("Character")]
         [Tooltip("Leave blank if expression should stay unchanged.")]
         public string expression;
@@ -32,8 +44,19 @@ public class VNStoryNode : ScriptableObject
         [Tooltip("Example: Hmph, Laugh, Sigh. Leave blank for silence.")]
         public string voiceCue;
 
+        [Range(0f, 1f)]
+        [Tooltip("Volume for this line's voice cue: 0 = silent, 1 = normal full volume.")]
+        public float voiceCueVolume = 1f;
+
         [Header("Optional SFX")]
         public AudioClip soundEffect;
+
+        [Range(0f, 1f)]
+        [Tooltip("Volume for this line's sound effect: 0 = silent, 1 = normal full volume.")]
+        public float soundEffectVolume = 1f;
+
+        [Tooltip("Tick for spoken audio placed in Sound Effect: stop it when leaving this line. Voice Cues always stop automatically.")]
+        public bool stopSoundEffectOnAdvance;
     }
 
     [Serializable]

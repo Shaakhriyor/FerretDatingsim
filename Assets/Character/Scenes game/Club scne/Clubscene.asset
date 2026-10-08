@@ -16,139 +16,254 @@ MonoBehaviour:
   - speakerId: 
     text: I was an incredibly succesful business man.
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: Girl1
-    text: You're so funny mc
+    text: You're so funny {playerName}
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 8300000, guid: e85d87bcee3c6a347920bf9335ea60b3, type: 3}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 1
   - speakerId: 
     text: I had it all money, women, power.
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: Girl2
     text: Back off he's mine!
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 8300000, guid: 60d2d310cf6990041a36c6a3f48a6d2e, type: 3}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 1
   - speakerId: MC
     text: 'Ladies, Ladies don''t fight over me
 
 '
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: 
-    text: But it always felt like something was mssing...
+    text: But it always felt like something was missing...
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: GIrl3
     text: Ugh get over yourself {playerName}
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 8300000, guid: 60d2d310cf6990041a36c6a3f48a6d2e, type: 3}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 1
   - speakerId: MC
     text: Playing hard to get?
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: 
     text: Love...
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: 
     text: True love...
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: Girl3
     text: Like i'd ever want a guy like you
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: MC
     text: Rich, Handsome and funny?
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: Girl3
     text: Shut up~
     scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: MC
     text: I think that's enough clubbing tonight, which one off you ladies is going
       home with me to...
     scenePicture: {fileID: 2147685559727469259, guid: 8b562a6a423a47b4f80ca12d7844715d, type: 3}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: 
     text: ...
     scenePicture: {fileID: -6732294965104032732, guid: c3cde6500fe963b47b8e742ef9c55026, type: 3}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 8300000, guid: d67b4d845edde614c87e0f64feb72b3a, type: 3}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: Girl1
     text: OH MY GOD!!
     scenePicture: {fileID: -6732294965104032732, guid: c3cde6500fe963b47b8e742ef9c55026, type: 3}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
-    soundEffect: {fileID: 0}
+    voiceCueVolume: 1
+    soundEffect: {fileID: 8300000, guid: b79dec8c0e8e2e44d89fa5b1489357c3, type: 3}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 1
   - speakerId: Girl2
     text: SOMEONE CALL AN AMBULANCE!!!!
     scenePicture: {fileID: -6732294965104032732, guid: c3cde6500fe963b47b8e742ef9c55026, type: 3}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
-  - speakerId: 
-    text: But alas i had my entire kife infront of me...
-    scenePicture: {fileID: -1955448553306655712, guid: 90074babac9d69c4697b667993310e09, type: 3}
-    expression: 
-    pose: 
-    voiceCue: 
-    soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
   - speakerId: Girl3
-    text: I'm calling them, stay with us {playerName}... {playerName}!!
+    text: I'M CALLING THEM RIGHT NOW, STAY WITH US <uppercase>{playerName}</uppercase>...
+      <uppercase>{playerName}</uppercase>!!!
     scenePicture: {fileID: -6732294965104032732, guid: c3cde6500fe963b47b8e742ef9c55026, type: 3}
+    fadeToBlack: 0
+    fadeDuration: 1.5
+    endDoctorIntro: 0
     expression: 
     pose: 
     voiceCue: 
+    voiceCueVolume: 1
     soundEffect: {fileID: 0}
+    soundEffectVolume: 1
+    stopSoundEffectOnAdvance: 0
+  - speakerId: 
+    text: But alas i had my entire life infront of me...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 1
+    fadeDuration: 1.5
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 1
+    soundEffect: {fileID: 8300000, guid: 6254600b7fbfef748bcf7961664ddb5d, type: 3}
+    soundEffectVolume: 0.03
+    stopSoundEffectOnAdvance: 0
   choicePrompt: What should I say?
   choices: []
   nextNode: {fileID: 0}

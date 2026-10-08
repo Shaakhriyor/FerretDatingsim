@@ -50,6 +50,13 @@ public class VNDialogueManager : MonoBehaviour
     [SerializeField] private VNStoryNode startingNode;
     [SerializeField] private bool playStartingNodeOnStart = true;
 
+    [Header("Next Scene")]
+    [Tooltip("When the whole dialogue chain ends, continue to this Unity scene. Leave empty to stay here. Example: Prologue_Doctor")]
+    [SerializeField] private string nextSceneName;
+    [Min(0f)]
+    [Tooltip("Seconds for each half of the transition: fade to black, then fade into the next scene.")]
+    [SerializeField] private float sceneFadeDuration = 0.75f;
+
     private readonly Dictionary<string, VNDialogueSpeaker> speakers =
         new Dictionary<string, VNDialogueSpeaker>(
             StringComparer.OrdinalIgnoreCase);
@@ -64,6 +71,9 @@ public class VNDialogueManager : MonoBehaviour
     private bool dialogueIsRunning;
 
     private string currentFullText = "";
+    private bool stopCurrentLineSoundEffect;
+
+    private float pictureFadeSecondsRemaining;
 
     public bool IsPaused { get; private set; }
     private int resumeInputBlockedThroughFrame = -1;
@@ -100,9 +110,10 @@ public class VNDialogueManager : MonoBehaviour
             continueIndicator.SetActive(false);
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
-        if (VNSaveSystem.TryRestorePending(this)) return;
+        if (VNSaveSystem.TryRestorePending(this)) yield break;
+        while (VNSceneTransition.IsBusy) yield return null;
 
         if (playStartingNodeOnStart &&
             startingNode != null)
@@ -113,6 +124,9 @@ public class VNDialogueManager : MonoBehaviour
 
     private void Update()
     {
+        if (VNSceneTransition.IsBusy) return;
+        UpdatePictureFade();
+
         if (IsPaused || Time.frameCount <= resumeInputBlockedThroughFrame || !dialogueIsRunning)
             return;
 
@@ -133,6 +147,8 @@ public class VNDialogueManager : MonoBehaviour
     {
         if (node == null)
             return;
+
+        StopCurrentLineAudio();
 
         RegisterSpeakers();
 
@@ -161,6 +177,7 @@ public class VNDialogueManager : MonoBehaviour
 
     public void EndDialogue()
     {
+        StopCurrentLineAudio();
         StopTyping();
         HideChoices();
 
@@ -189,6 +206,7 @@ public class VNDialogueManager : MonoBehaviour
             return;
         }
 
+        StopCurrentLineAudio();
         currentLineIndex++;
 
         if (currentNode == null)
@@ -211,11 +229,22 @@ public class VNDialogueManager : MonoBehaviour
         VNStoryNode.DialogueLine line =
             currentNode.lines[currentLineIndex];
 
+        if (line.endDoctorIntro)
+        {
+            foreach (var intro in FindObjectsByType<VNDoctorIntro>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                if (intro.isActiveAndEnabled) intro.FadeOutNow();
+        }
+
         // Empty picture fields keep the picture from the previous line.
         if (line.scenePicture != null && scenePictureImage != null)
         {
+            pictureFadeSecondsRemaining = 0f;
             scenePictureImage.sprite = line.scenePicture;
+            scenePictureImage.color = Color.white;
         }
+
+        if (line.fadeToBlack)
+            BeginPictureFade(line.fadeDuration);
 
         ConfigureSpeaker(line);
 
@@ -226,6 +255,42 @@ public class VNDialogueManager : MonoBehaviour
         typingCoroutine =
             StartCoroutine(
                 TypeCurrentLine(currentFullText));
+    }
+
+    private void BeginPictureFade(float seconds)
+    {
+        if (scenePictureImage == null)
+        {
+            Debug.LogWarning("Assign Scene Picture Image on VNDialogueManager to use Fade To Black.", this);
+            return;
+        }
+
+        pictureFadeSecondsRemaining = Mathf.Max(0f, seconds);
+        if (pictureFadeSecondsRemaining == 0f)
+            scenePictureImage.color = Color.black;
+    }
+
+    private void UpdatePictureFade()
+    {
+        if (IsPaused || pictureFadeSecondsRemaining <= 0f)
+            return;
+
+        if (scenePictureImage == null)
+        {
+            pictureFadeSecondsRemaining = 0f;
+            return;
+        }
+
+        // Interpolate from the current shade using the remaining time. This also
+        // resumes correctly when a save is restored halfway through the fade.
+        float step = Mathf.Min(Time.deltaTime, pictureFadeSecondsRemaining);
+        if (step <= 0f) return;
+        scenePictureImage.color = Color.Lerp(
+            scenePictureImage.color, Color.black, step / pictureFadeSecondsRemaining);
+        pictureFadeSecondsRemaining -= step;
+
+        if (pictureFadeSecondsRemaining <= 0f)
+            scenePictureImage.color = Color.black;
     }
 
     // =========================================================
@@ -426,6 +491,9 @@ public class VNDialogueManager : MonoBehaviour
     private void PlayLineAudio(
         VNStoryNode.DialogueLine line)
     {
+        StopCurrentLineAudio();
+        stopCurrentLineSoundEffect = line.soundEffect != null && line.stopSoundEffectOnAdvance;
+
         if (!string.IsNullOrWhiteSpace(
             line.voiceCue))
         {
@@ -441,7 +509,7 @@ public class VNDialogueManager : MonoBehaviour
                 if (clip != null)
                 {
                     voiceAudioSource.PlayOneShot(
-                        clip);
+                        clip, Mathf.Clamp01(line.voiceCueVolume));
                 }
             }
         }
@@ -449,8 +517,24 @@ public class VNDialogueManager : MonoBehaviour
         if (line.soundEffect != null)
         {
             soundEffectAudioSource.PlayOneShot(
-                line.soundEffect);
+                line.soundEffect, Mathf.Clamp01(line.soundEffectVolume));
         }
+    }
+
+    private void StopCurrentLineAudio()
+    {
+        if (voiceAudioSource != null)
+            voiceAudioSource.Stop();
+
+        if (stopCurrentLineSoundEffect && soundEffectAudioSource != null)
+            soundEffectAudioSource.Stop();
+
+        stopCurrentLineSoundEffect = false;
+    }
+
+    private void OnDisable()
+    {
+        StopCurrentLineAudio();
     }
 
     // =========================================================
@@ -478,7 +562,20 @@ public class VNDialogueManager : MonoBehaviour
             return;
         }
 
-        EndDialogue();
+        FinishStory();
+    }
+
+    private void FinishStory()
+    {
+        if (string.IsNullOrWhiteSpace(nextSceneName))
+        {
+            EndDialogue();
+            return;
+        }
+        if (VNSceneTransition.TryBegin(nextSceneName, sceneFadeDuration))
+            EndDialogue();
+        else if (currentNode != null && currentNode.lines != null && currentNode.lines.Count > 0)
+            currentLineIndex = Mathf.Clamp(currentLineIndex, 0, currentNode.lines.Count - 1);
     }
 
     private void DisplayChoices()
@@ -573,7 +670,7 @@ public class VNDialogueManager : MonoBehaviour
         }
         else
         {
-            EndDialogue();
+            FinishStory();
         }
     }
 
@@ -712,24 +809,21 @@ public class VNDialogueManager : MonoBehaviour
 
     public VNSaveData CaptureSave(VNSaveCatalog catalog)
     {
-        return new VNSaveData
-        {
-            nodeId = catalog.Id(currentNode),
-            nodeRevision = VNSaveSystem.NodeRevision(currentNode, catalog),
-            lineIndex = currentLineIndex,
-            running = dialogueIsRunning,
-            choicesShowing = choicesAreShowing,
-            typing = isTyping,
-            visibleCharacters = dialogueText != null ? dialogueText.maxVisibleCharacters : 0,
+        return new VNSaveData {
+            nodeId = catalog.Id(currentNode), nodeRevision = VNSaveSystem.NodeRevision(currentNode, catalog), lineIndex = currentLineIndex,
+            running = dialogueIsRunning, choicesShowing = choicesAreShowing,
+            typing = isTyping, visibleCharacters = dialogueText != null ? dialogueText.maxVisibleCharacters : 0,
             previewText = dialogueText != null && dialogueIsRunning ? dialogueText.text : "Between conversations",
             pictureId = scenePictureImage != null ? catalog.Id(scenePictureImage.sprite) : "",
             pictureColor = scenePictureImage != null ? scenePictureImage.color : Color.white,
-            pictureEnabled = scenePictureImage != null && scenePictureImage.enabled
+            pictureEnabled = scenePictureImage != null && scenePictureImage.enabled,
+            pictureFadeSecondsRemaining = scenePictureImage != null ? pictureFadeSecondsRemaining : 0f
         };
     }
 
     public void RestoreSave(VNSaveData data, VNSaveCatalog catalog)
     {
+        StopCurrentLineAudio();
         StopTyping();
         HideChoices();
         if (typingAudioSource != null) typingAudioSource.Stop();
@@ -739,6 +833,7 @@ public class VNDialogueManager : MonoBehaviour
         currentNode = catalog.Resolve<VNStoryNode>(data.nodeId);
         currentLineIndex = data.lineIndex;
         dialogueIsRunning = data.running;
+        pictureFadeSecondsRemaining = Mathf.Max(0f, data.pictureFadeSecondsRemaining);
         if (scenePictureImage != null)
         {
             scenePictureImage.sprite = catalog.Resolve<Sprite>(data.pictureId);

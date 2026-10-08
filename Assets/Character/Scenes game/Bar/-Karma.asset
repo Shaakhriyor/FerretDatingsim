@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b20a87d1ce4647b48ad8824eaf6b51a2, type: 3}
+  m_Name: -Karma
+  m_EditorClassIdentifier: Assembly-CSharp::VNStoryNode
+  lines:
+  - speakerId: MC
+    text: How about you shut up.
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 8300000, guid: ce46823098f640a4e8388c7049c7f81d, type: 3}
+    soundEffectVolume: 0.475
+    stopSoundEffectOnAdvance: 1
+  - speakerId: Bar
+    text: I was just trying to make you laugh sorry...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 8300000, guid: 9b5657c9f19affb4b9d908f534a329e6, type: 3}
+    soundEffectVolume: 0.437
+    stopSoundEffectOnAdvance: 1
+  choicePrompt: What should I say?
+  choices: []
+  nextNode: {fileID: 11400000, guid: 78e06a06ef4bbf64ebe49f14ab56eac0, type: 2}
