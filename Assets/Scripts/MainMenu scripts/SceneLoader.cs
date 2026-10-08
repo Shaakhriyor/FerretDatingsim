@@ -6,33 +6,26 @@ using System.Collections;
 public class SceneLoader : MonoBehaviour
 {
     [Header("Target Scene Names")]
-    [Tooltip("Exact name of your new game scene")]
     public string newGameSceneName = "GameScene";
-
-    [Tooltip("Exact name of your saved game / level select scene")]
     public string loadGameSceneName = "LoadGameScene";
 
-    [Header("New Game Eye Zoom Transition References")]
-    public Camera mainCamera;
-    public Transform targetEyeTransform;
-    public float targetZoomSize = 0.5f;
-    public CanvasGroup mainButtonsCanvasGroup;
-    public Image blackFadeOverlay;
+    [Header("New Game Eye Rush References")]
+    public RectTransform openEyesRect;        // Drag OpenEyes UI object here
+    public CanvasGroup mainButtonsCanvasGroup; // Drag MainMenuButtons container
+    public Image blackFadeOverlay;             // Drag BlackFadeOverlay image
 
     [Header("Audio SFX")]
     public AudioSource audioSource;
     public AudioClip buttonClickClip;
     public AudioClip flyingWhooshClip;
 
-    [Header("Transition Timings")]
-    public float buttonFadeDuration = 0.5f;
-    public float cameraZoomDuration = 1.8f;
+    [Header("Rush Settings")]
+    public float buttonFadeDuration = 0.4f;
+    public float eyeRushDuration = 1.5f;
+    public Vector3 giantTargetScale = new Vector3(12f, 12f, 1f); // How giant eyes grow
 
     private bool isTransitioning = false;
 
-    // -------------------------------------------------------------
-    // 1. NEW GAME (Triggers cinematic zoom & UI fade)
-    // -------------------------------------------------------------
     public void PlayNewGame()
     {
         if (isTransitioning) return;
@@ -43,20 +36,20 @@ public class SceneLoader : MonoBehaviour
     {
         isTransitioning = true;
 
-        // Lock menu interaction
+        // 1. Lock menu interaction
         if (mainButtonsCanvasGroup != null)
         {
             mainButtonsCanvasGroup.interactable = false;
             mainButtonsCanvasGroup.blocksRaycasts = false;
         }
 
-        // Button click SFX
+        // 2. Play button click sound
         if (audioSource && buttonClickClip)
         {
             audioSource.PlayOneShot(buttonClickClip);
         }
 
-        // Fade buttons out
+        // 3. Fade buttons out
         float elapsedTime = 0f;
         while (elapsedTime < buttonFadeDuration)
         {
@@ -69,32 +62,35 @@ public class SceneLoader : MonoBehaviour
         }
         if (mainButtonsCanvasGroup) mainButtonsCanvasGroup.alpha = 0f;
 
-        // Flying whoosh SFX
+        // 4. Play flying whoosh sound
         if (audioSource && flyingWhooshClip)
         {
             audioSource.PlayOneShot(flyingWhooshClip);
         }
 
-        // Zoom camera to target eye & fade to black
-        if (mainCamera && targetEyeTransform)
+        // 5. Scale OpenEyes up giant and center them on screen
+        if (openEyesRect != null)
         {
-            Vector3 startCamPos = mainCamera.transform.position;
-            float startOrthoSize = mainCamera.orthographicSize;
-            Vector3 targetCamPos = new Vector3(targetEyeTransform.position.x, targetEyeTransform.position.y, startCamPos.z);
+            Vector3 startScale = openEyesRect.localScale;
+            Vector2 startPos = openEyesRect.anchoredPosition;
+            Vector2 targetPos = Vector2.zero; // Centers eyes on screen
 
             elapsedTime = 0f;
-            while (elapsedTime < cameraZoomDuration)
+            while (elapsedTime < eyeRushDuration)
             {
                 elapsedTime += Time.deltaTime;
-                float t = elapsedTime / cameraZoomDuration;
-                float smoothT = Mathf.SmoothStep(0f, 1f, t);
+                float t = elapsedTime / eyeRushDuration;
 
-                mainCamera.transform.position = Vector3.Lerp(startCamPos, targetCamPos, smoothT);
-                mainCamera.orthographicSize = Mathf.Lerp(startOrthoSize, targetZoomSize, smoothT);
+                // Exponential curve so eyes accelerate as they rush into screen
+                float smoothT = t * t * t;
 
-                if (t >= 0.4f && blackFadeOverlay != null)
+                openEyesRect.localScale = Vector3.Lerp(startScale, giantTargetScale, smoothT);
+                openEyesRect.anchoredPosition = Vector2.Lerp(startPos, targetPos, smoothT);
+
+                // Fade screen to black as eyes engulf the camera
+                if (t >= 0.3f && blackFadeOverlay != null)
                 {
-                    float fadeProgress = (t - 0.4f) / 0.6f;
+                    float fadeProgress = (t - 0.3f) / 0.7f;
                     Color c = blackFadeOverlay.color;
                     c.a = Mathf.Clamp01(fadeProgress);
                     blackFadeOverlay.color = c;
@@ -104,6 +100,7 @@ public class SceneLoader : MonoBehaviour
             }
         }
 
+        // Ensure pitch black before loading
         if (blackFadeOverlay)
         {
             Color finalColor = blackFadeOverlay.color;
@@ -113,7 +110,7 @@ public class SceneLoader : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f);
 
-        // Load New Game Scene
+        // 6. Load scene
         if (!string.IsNullOrEmpty(newGameSceneName))
         {
             SceneManager.LoadScene(newGameSceneName);
@@ -124,40 +121,17 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
-    // -------------------------------------------------------------
-    // 2. LOAD GAME
-    // -------------------------------------------------------------
     public void LoadSavedGame()
     {
         if (!string.IsNullOrEmpty(loadGameSceneName))
         {
             SceneManager.LoadScene(loadGameSceneName);
         }
-        else
-        {
-            Debug.LogWarning("Load Game Scene Name is empty on SceneLoader!");
-        }
     }
 
-    // -------------------------------------------------------------
-    // 3. GENERIC SCENE LOAD (Pass scene name directly)
-    // -------------------------------------------------------------
-    public void LoadSceneByName(string sceneName)
-    {
-        if (!string.IsNullOrEmpty(sceneName))
-        {
-            SceneManager.LoadScene(sceneName);
-        }
-    }
-
-    // -------------------------------------------------------------
-    // 4. QUIT GAME
-    // -------------------------------------------------------------
     public void QuitGame()
     {
-        Debug.Log("Quitting game...");
         Application.Quit();
-
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
