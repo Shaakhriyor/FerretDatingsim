@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3c2ea57e58afa7489d969e0b08e1d3e, type: 3}
+  m_Name: VNSaveCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::VNSaveCatalog
+  entries:
+  - id: 0bf569ac2700c1046afe61b15e27ef0b:11400000
+    asset: {fileID: 11400000, guid: 0bf569ac2700c1046afe61b15e27ef0b, type: 2}
+  - id: 1bb710131b5ec2145ab1cc7be128a263:11400000
+    asset: {fileID: 11400000, guid: 1bb710131b5ec2145ab1cc7be128a263, type: 2}
+  - id: 60d2d310cf6990041a36c6a3f48a6d2e:8300000
+    asset: {fileID: 8300000, guid: 60d2d310cf6990041a36c6a3f48a6d2e, type: 3}
+  - id: 793cafcffdc0a8143bfff36f2cea5e5f:8300000
+    asset: {fileID: 8300000, guid: 793cafcffdc0a8143bfff36f2cea5e5f, type: 3}
+  - id: 869f46d8cd5a3dd439fd889cc44d127b:11400000
+    asset: {fileID: 11400000, guid: 869f46d8cd5a3dd439fd889cc44d127b, type: 2}
+  - id: 8b562a6a423a47b4f80ca12d7844715d:2147685559727469259
+    asset: {fileID: 2147685559727469259, guid: 8b562a6a423a47b4f80ca12d7844715d, type: 3}
+  - id: 90074babac9d69c4697b667993310e09:-1955448553306655712
+    asset: {fileID: -1955448553306655712, guid: 90074babac9d69c4697b667993310e09, type: 3}
+  - id: bd4b12524081bdd42b49b706327cb831:1208040086343421634
+    asset: {fileID: 1208040086343421634, guid: bd4b12524081bdd42b49b706327cb831, type: 3}
+  - id: c3cde6500fe963b47b8e742ef9c55026:-6732294965104032732
+    asset: {fileID: -6732294965104032732, guid: c3cde6500fe963b47b8e742ef9c55026, type: 3}
+  - id: d67b4d845edde614c87e0f64feb72b3a:8300000
+    asset: {fileID: 8300000, guid: d67b4d845edde614c87e0f64feb72b3a, type: 3}
+  - id: e85d87bcee3c6a347920bf9335ea60b3:8300000
+    asset: {fileID: 8300000, guid: e85d87bcee3c6a347920bf9335ea60b3, type: 3}
