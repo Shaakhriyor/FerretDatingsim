@@ -1,18 +1,20 @@
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class SceneLoader : MonoBehaviour
 {
-    [Header("Target Scene Names")]
-    public string newGameSceneName = "GameScene";
-    public string loadGameSceneName = "LoadGameScene";
+    [Header("Connect our name and load menu")]
+    public VNNewGameMenu newGameMenu;
+
+    // Retained for compatibility with existing scene data. Destinations are now
+    // configured on VNNewGameMenu; Load opens slots instead of loading a UI scene.
+    [HideInInspector] public string newGameSceneName = "GameScene";
+    [HideInInspector] public string loadGameSceneName = "LoadGameScene";
 
     [Header("New Game Eye Rush References")]
-    public RectTransform openEyesRect;        // Drag OpenEyes UI object here
-    public CanvasGroup mainButtonsCanvasGroup; // Drag MainMenuButtons container
-    public Image blackFadeOverlay;             // Drag BlackFadeOverlay image
+    public RectTransform openEyesRect;
+    public CanvasGroup mainButtonsCanvasGroup;
+    public UnityEngine.UI.Image blackFadeOverlay;
 
     [Header("Audio SFX")]
     public AudioSource audioSource;
@@ -20,120 +22,184 @@ public class SceneLoader : MonoBehaviour
     public AudioClip flyingWhooshClip;
 
     [Header("Rush Settings")]
-    public float buttonFadeDuration = 0.4f;
-    public float eyeRushDuration = 1.5f;
-    public Vector3 giantTargetScale = new Vector3(12f, 12f, 1f); // How giant eyes grow
+    [Min(0f)] public float buttonFadeDuration = 0.4f;
+    [Min(0f)] public float eyeRushDuration = 1.5f;
+    public Vector3 giantTargetScale = new Vector3(12f, 12f, 1f);
 
-    private bool isTransitioning = false;
+    private bool isTransitioning;
+    private bool snapshotCaptured;
+    private Vector3 originalEyeScale;
+    private Vector2 originalEyePosition;
+    private float originalButtonsAlpha;
+    private bool originalButtonsInteractable, originalButtonsBlockRaycasts;
+    private Color originalOverlayColor;
+    private bool originalOverlayRaycast, originalOverlayEnabled, originalOverlayActive;
 
     public void PlayNewGame()
     {
-        if (isTransitioning) return;
+        if (isTransitioning || VNSceneTransition.IsBusy) return;
+        if (newGameMenu == null)
+        {
+            Debug.LogError("Assign MainMenuConnections (VNNewGameMenu) to SceneLoader's New Game Menu field.", this);
+            return;
+        }
+
+        // Capture before VNNewGameMenu locks the same button group.
+        CaptureMenuState();
+        if (!newGameMenu.TryBeginAnimatedIntro(RestoreMenu))
+        {
+            snapshotCaptured = false;
+            return;
+        }
+        isTransitioning = true;
         StartCoroutine(NewGameTransitionRoutine());
     }
 
     private IEnumerator NewGameTransitionRoutine()
     {
-        isTransitioning = true;
-
-        // 1. Lock menu interaction
         if (mainButtonsCanvasGroup != null)
         {
             mainButtonsCanvasGroup.interactable = false;
             mainButtonsCanvasGroup.blocksRaycasts = false;
         }
-
-        // 2. Play button click sound
-        if (audioSource && buttonClickClip)
+        if (blackFadeOverlay != null)
         {
-            audioSource.PlayOneShot(buttonClickClip);
+            blackFadeOverlay.gameObject.SetActive(true);
+            blackFadeOverlay.enabled = true;
+            blackFadeOverlay.raycastTarget = true;
         }
+        if (audioSource != null && buttonClickClip != null)
+            audioSource.PlayOneShot(buttonClickClip);
 
-        // 3. Fade buttons out
-        float elapsedTime = 0f;
-        while (elapsedTime < buttonFadeDuration)
+        float duration = Mathf.Max(0f, buttonFadeDuration);
+        float elapsed = 0f;
+        while (elapsed < duration)
         {
-            elapsedTime += Time.deltaTime;
-            if (mainButtonsCanvasGroup)
-            {
-                mainButtonsCanvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsedTime / buttonFadeDuration);
-            }
+            elapsed = Mathf.Min(duration, elapsed + Time.unscaledDeltaTime);
+            if (mainButtonsCanvasGroup != null)
+                mainButtonsCanvasGroup.alpha = Mathf.Lerp(originalButtonsAlpha, 0f, elapsed / duration);
             yield return null;
         }
-        if (mainButtonsCanvasGroup) mainButtonsCanvasGroup.alpha = 0f;
+        if (mainButtonsCanvasGroup != null) mainButtonsCanvasGroup.alpha = 0f;
 
-        // 4. Play flying whoosh sound
-        if (audioSource && flyingWhooshClip)
-        {
+        if (audioSource != null && flyingWhooshClip != null)
             audioSource.PlayOneShot(flyingWhooshClip);
-        }
 
-        // 5. Scale OpenEyes up giant and center them on screen
+        duration = Mathf.Max(0f, eyeRushDuration);
+        elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed = Mathf.Min(duration, elapsed + Time.unscaledDeltaTime);
+            float t = elapsed / duration;
+            float smoothT = t * t * t;
+            if (openEyesRect != null)
+            {
+                openEyesRect.localScale = Vector3.Lerp(originalEyeScale, giantTargetScale, smoothT);
+                openEyesRect.anchoredPosition = Vector2.Lerp(originalEyePosition, Vector2.zero, smoothT);
+            }
+            if (blackFadeOverlay != null && t >= 0.3f)
+                SetBlackAlpha(Mathf.Lerp(originalOverlayColor.a, 1f, (t - 0.3f) / 0.7f));
+            yield return null;
+        }
         if (openEyesRect != null)
         {
-            Vector3 startScale = openEyesRect.localScale;
-            Vector2 startPos = openEyesRect.anchoredPosition;
-            Vector2 targetPos = Vector2.zero; // Centers eyes on screen
-
-            elapsedTime = 0f;
-            while (elapsedTime < eyeRushDuration)
-            {
-                elapsedTime += Time.deltaTime;
-                float t = elapsedTime / eyeRushDuration;
-
-                // Exponential curve so eyes accelerate as they rush into screen
-                float smoothT = t * t * t;
-
-                openEyesRect.localScale = Vector3.Lerp(startScale, giantTargetScale, smoothT);
-                openEyesRect.anchoredPosition = Vector2.Lerp(startPos, targetPos, smoothT);
-
-                // Fade screen to black as eyes engulf the camera
-                if (t >= 0.3f && blackFadeOverlay != null)
-                {
-                    float fadeProgress = (t - 0.3f) / 0.7f;
-                    Color c = blackFadeOverlay.color;
-                    c.a = Mathf.Clamp01(fadeProgress);
-                    blackFadeOverlay.color = c;
-                }
-
-                yield return null;
-            }
+            openEyesRect.localScale = giantTargetScale;
+            openEyesRect.anchoredPosition = Vector2.zero;
         }
+        SetBlackAlpha(1f);
+        yield return new WaitForSecondsRealtime(0.2f);
 
-        // Ensure pitch black before loading
-        if (blackFadeOverlay)
+        // Stay in MAINMENU. The name panel's Start button owns the new-game load.
+        if (newGameMenu == null || !newGameMenu.CompleteAnimatedIntro())
         {
-            Color finalColor = blackFadeOverlay.color;
-            finalColor.a = 1f;
-            blackFadeOverlay.color = finalColor;
+            Debug.LogError("The name panel could not be opened. Check VNNewGameMenu is enabled and configured.", this);
+            if (newGameMenu != null) newGameMenu.Cancel();
+            RestoreMenu();
+            yield break;
         }
-
-        yield return new WaitForSeconds(0.2f);
-
-        // 6. Load scene
-        if (!string.IsNullOrEmpty(newGameSceneName))
-        {
-            SceneManager.LoadScene(newGameSceneName);
-        }
-        else
-        {
-            Debug.LogWarning("New Game Scene Name is empty on SceneLoader!");
-        }
+        if (blackFadeOverlay != null) blackFadeOverlay.raycastTarget = false;
+        // Keep the black background until Start or Cancel. Cancel invokes RestoreMenu.
     }
 
     public void LoadSavedGame()
     {
-        if (!string.IsNullOrEmpty(loadGameSceneName))
-        {
-            SceneManager.LoadScene(loadGameSceneName);
-        }
+        if (isTransitioning || VNSceneTransition.IsBusy) return;
+        if (newGameMenu != null) newGameMenu.OpenLoadGame();
+        else Debug.LogError("Assign VNNewGameMenu to SceneLoader's New Game Menu field.", this);
     }
 
     public void QuitGame()
     {
+        if (isTransitioning || VNSceneTransition.IsBusy) return;
         Application.Quit();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    private void CaptureMenuState()
+    {
+        if (openEyesRect != null)
+        {
+            originalEyeScale = openEyesRect.localScale;
+            originalEyePosition = openEyesRect.anchoredPosition;
+        }
+        if (mainButtonsCanvasGroup != null)
+        {
+            originalButtonsAlpha = mainButtonsCanvasGroup.alpha;
+            originalButtonsInteractable = mainButtonsCanvasGroup.interactable;
+            originalButtonsBlockRaycasts = mainButtonsCanvasGroup.blocksRaycasts;
+        }
+        if (blackFadeOverlay != null)
+        {
+            originalOverlayColor = blackFadeOverlay.color;
+            originalOverlayRaycast = blackFadeOverlay.raycastTarget;
+            originalOverlayEnabled = blackFadeOverlay.enabled;
+            originalOverlayActive = blackFadeOverlay.gameObject.activeSelf;
+        }
+        snapshotCaptured = true;
+    }
+
+    private void SetBlackAlpha(float alpha)
+    {
+        if (blackFadeOverlay == null) return;
+        Color color = blackFadeOverlay.color;
+        color.a = Mathf.Clamp01(alpha);
+        blackFadeOverlay.color = color;
+    }
+
+    private void RestoreMenu()
+    {
+        if (this == null) return;
+        StopAllCoroutines();
+        isTransitioning = false;
+        if (!snapshotCaptured) return;
+        snapshotCaptured = false;
+        if (openEyesRect != null)
+        {
+            openEyesRect.localScale = originalEyeScale;
+            openEyesRect.anchoredPosition = originalEyePosition;
+        }
+        if (mainButtonsCanvasGroup != null)
+        {
+            mainButtonsCanvasGroup.alpha = originalButtonsAlpha;
+            mainButtonsCanvasGroup.interactable = originalButtonsInteractable;
+            mainButtonsCanvasGroup.blocksRaycasts = originalButtonsBlockRaycasts;
+        }
+        if (blackFadeOverlay != null)
+        {
+            blackFadeOverlay.color = originalOverlayColor;
+            blackFadeOverlay.raycastTarget = originalOverlayRaycast;
+            blackFadeOverlay.enabled = originalOverlayEnabled;
+            blackFadeOverlay.gameObject.SetActive(originalOverlayActive);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (!snapshotCaptured) return;
+        if (newGameMenu != null && newGameMenu.isActiveAndEnabled && !VNSceneTransition.IsBusy)
+            newGameMenu.Cancel();
+        RestoreMenu();
     }
 }

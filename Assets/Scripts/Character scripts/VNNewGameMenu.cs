@@ -22,17 +22,20 @@ public sealed class VNNewGameMenu : MonoBehaviour
     private UnityEngine.UI.Button startButton, cancelButton;
     private bool busy, buttonsLocked, previousInteractable;
     private bool loadMenuDisabled, previousLoadMenuEnabled;
+    private bool introInProgress;
+    private System.Action introCancelled;
+    public bool IsNamePanelOpen => panelRoot != null && panelRoot.activeSelf;
     private const int NameLimit = 24;
 
-    // Wire your teammate's New Game button to this method.
+    // Opens immediately. For the eye-rush animation, wire New Game to SceneLoader.PlayNewGame instead.
     public void OpenNewGame()
     {
-        if (!isActiveAndEnabled || busy || VNSceneTransition.IsBusy ||
+        if (!isActiveAndEnabled || introInProgress || busy || VNSceneTransition.IsBusy ||
             (loadMenu != null && loadMenu.IsOpen)) return;
         if (panelRoot != null && panelRoot.activeSelf) return;
         if (panelRoot == null) BuildPanel();
         LockMainButtons();
-        if (loadMenu != null)
+        if (loadMenu != null && !loadMenuDisabled)
         {
             previousLoadMenuEnabled = loadMenu.enabled;
             loadMenuDisabled = true;
@@ -46,10 +49,43 @@ public sealed class VNNewGameMenu : MonoBehaviour
         nameInput.ActivateInputField();
     }
 
+    // SceneLoader reserves the UI before playing its animation.
+    public bool TryBeginAnimatedIntro(System.Action onCancelled)
+    {
+        if (!isActiveAndEnabled || busy || introInProgress || IsNamePanelOpen ||
+            VNSceneTransition.IsBusy || (loadMenu != null && loadMenu.IsOpen)) return false;
+        introInProgress = true;
+        introCancelled = onCancelled;
+        LockMainButtons();
+        if (loadMenu != null && !loadMenuDisabled)
+        {
+            previousLoadMenuEnabled = loadMenu.enabled;
+            loadMenuDisabled = true;
+            loadMenu.enabled = false;
+        }
+        return true;
+    }
+
+    public bool CompleteAnimatedIntro()
+    {
+        if (!introInProgress || !isActiveAndEnabled) return false;
+        introInProgress = false;
+        OpenNewGame();
+        return IsNamePanelOpen;
+    }
+
+    private void NotifyIntroCancelled()
+    {
+        introInProgress = false;
+        var callback = introCancelled;
+        introCancelled = null;
+        callback?.Invoke();
+    }
+
     // Wire your teammate's Load Game button to this method.
     public void OpenLoadGame()
     {
-        if (!isActiveAndEnabled || busy || VNSceneTransition.IsBusy ||
+        if (!isActiveAndEnabled || introInProgress || busy || VNSceneTransition.IsBusy ||
             (panelRoot != null && panelRoot.activeSelf)) return;
         if (loadMenu == null)
         {
@@ -75,6 +111,7 @@ public sealed class VNNewGameMenu : MonoBehaviour
         if (panelRoot != null) panelRoot.SetActive(false);
         RestoreLoadMenu();
         RestoreMainButtons();
+        NotifyIntroCancelled();
         if (UnityEngine.EventSystems.EventSystem.current != null)
             UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
     }
@@ -124,7 +161,7 @@ public sealed class VNNewGameMenu : MonoBehaviour
 
     private void Update()
     {
-        if (!busy && panelRoot != null && panelRoot.activeSelf && Keyboard.current != null &&
+        if (!busy && (introInProgress || IsNamePanelOpen) && Keyboard.current != null &&
             Keyboard.current.escapeKey.wasPressedThisFrame) Cancel();
     }
 
@@ -259,6 +296,7 @@ public sealed class VNNewGameMenu : MonoBehaviour
         RestoreLoadMenu();
         RestoreMainButtons();
         busy = false;
+        NotifyIntroCancelled();
     }
 
     private void OnDestroy()
