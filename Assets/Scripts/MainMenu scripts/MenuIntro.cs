@@ -14,7 +14,13 @@ public class MenuIntro : MonoBehaviour
     public Volume postProcessingVolume;
 
     [Header("References - UI Buttons")]
-    public CanvasGroup[] menuButtons; // Drag individual button CanvasGroups here
+    public CanvasGroup[] menuButtons;
+
+    [Header("References - Audio")]
+    public AudioSource audioSource;
+    public AudioClip shakeRumbleClip; // Plays during closed eyes tremble
+    public AudioClip bamImpactClip;   // Plays right when eyes snap open
+    public AudioClip buttonFadeClip;  // (Optional) Soft chime/whoosh as buttons appear
 
     [Header("1. Fade In Closed Eyes")]
     public float initialFadeDuration = 3f;
@@ -30,8 +36,8 @@ public class MenuIntro : MonoBehaviour
     public float fxSlowFadeDuration = 3.0f;
 
     [Header("4. Button Sequential Fade Settings")]
-    public float buttonFadeDuration = 0.8f;  // Time for 1 button to appear
-    public float delayBetweenButtons = 0.4f; // Delay before starting the next button
+    public float buttonFadeDuration = 0.8f;
+    public float delayBetweenButtons = 0.4f;
 
     private RectTransform openEyesRect;
 
@@ -43,7 +49,6 @@ public class MenuIntro : MonoBehaviour
         if (redVignette) SetVignetteAlpha(0);
         if (postProcessingVolume) postProcessingVolume.weight = 0;
 
-        // Make sure all buttons start completely invisible and non-interactive
         foreach (CanvasGroup btn in menuButtons)
         {
             if (btn != null)
@@ -59,7 +64,7 @@ public class MenuIntro : MonoBehaviour
 
     IEnumerator IntroSequence()
     {
-        // --- 1. Fade in closed eyes ---
+        // 1. Fade in closed eyes
         float elapsedTime = 0f;
         Color eyeColor = closedEyes.color;
         while (elapsedTime < initialFadeDuration)
@@ -72,7 +77,12 @@ public class MenuIntro : MonoBehaviour
         eyeColor.a = 1f;
         closedEyes.color = eyeColor;
 
-        // --- 2. Ramp-up shake ---
+        // 2. Play Shake Rumble & Ramp-up shake
+        if (audioSource && shakeRumbleClip)
+        {
+            audioSource.PlayOneShot(shakeRumbleClip);
+        }
+
         Vector2 closedOriginalPos = closedEyes.rectTransform.anchoredPosition;
         elapsedTime = 0f;
         while (elapsedTime < rampUpDuration)
@@ -85,12 +95,17 @@ public class MenuIntro : MonoBehaviour
         }
         closedEyes.rectTransform.anchoredPosition = closedOriginalPos;
 
-        // --- 3. BAM! Swap eyes + Burst glow/blur ---
+        // 3. BAM! Play Heavy Impact Audio + Swap eyes + Burst glow/blur
+        if (audioSource && bamImpactClip)
+        {
+            audioSource.PlayOneShot(bamImpactClip);
+        }
+
         closedEyes.gameObject.SetActive(false);
         openEyes.SetActive(true);
         StartCoroutine(BurstEffects());
 
-        // --- 4. Ramp-down shake ---
+        // 4. Ramp-down shake
         if (openEyesRect != null)
         {
             Vector2 openOriginalPos = openEyesRect.anchoredPosition;
@@ -106,13 +121,11 @@ public class MenuIntro : MonoBehaviour
             openEyesRect.anchoredPosition = openOriginalPos;
         }
 
-        // --- 5. Fade vignette & blur away ---
+        // 5. Fade vignette & blur away
         StartCoroutine(FadeEffectsAway());
 
-        // --- 6. Fade in buttons ONE BY ONE ---
+        // 6. Fade in buttons ONE BY ONE
         yield return StartCoroutine(FadeInButtonsSequentially());
-
-        Debug.Log("Full Intro sequence finished!");
     }
 
     IEnumerator FadeInButtonsSequentially()
@@ -120,6 +133,11 @@ public class MenuIntro : MonoBehaviour
         foreach (CanvasGroup btn in menuButtons)
         {
             if (btn == null) continue;
+
+            if (audioSource && buttonFadeClip)
+            {
+                audioSource.PlayOneShot(buttonFadeClip);
+            }
 
             float elapsedTime = 0f;
             while (elapsedTime < buttonFadeDuration)
@@ -133,7 +151,6 @@ public class MenuIntro : MonoBehaviour
             btn.interactable = true;
             btn.blocksRaycasts = true;
 
-            // Brief pause before fading the next button in
             yield return new WaitForSeconds(delayBetweenButtons);
         }
     }
