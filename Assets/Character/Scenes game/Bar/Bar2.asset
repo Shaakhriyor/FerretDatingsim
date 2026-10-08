@@ -1,0 +1,203 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b20a87d1ce4647b48ad8824eaf6b51a2, type: 3}
+  m_Name: Bar2
+  m_EditorClassIdentifier: Assembly-CSharp::VNStoryNode
+  lines:
+  - speakerId: MC
+    text: ...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: Can i ask you something?
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 8300000, guid: 8b4d2e646e9edab4c867a971dc59352a, type: 3}
+    soundEffectVolume: 0.415
+    stopSoundEffectOnAdvance: 1
+  - speakerId: Bar
+    text: I'm all ears.
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 8300000, guid: bdf426bcb575d4241a29af714fc7172b, type: 3}
+    soundEffectVolume: 0.261
+    stopSoundEffectOnAdvance: 1
+  - speakerId: MC
+    text: "Let\u2019s say you have a life ending disease, that will kill you in a
+      week and with treatment a couple months."
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 1
+  - speakerId: Bar
+    text: Hmm?
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 8300000, guid: fb7d61dcb554c764fa615f8fd5361844, type: 3}
+    soundEffectVolume: 0.272
+    stopSoundEffectOnAdvance: 1
+  - speakerId: MC
+    text: But there was an alternative method that is risky and you have no idea
+      what the procedure is but it could cure you completely. What would you do.
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: Bar
+    text: Hmm well...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 8300000, guid: 40a50c881c2402e459ea0966cfcebd55, type: 3}
+    soundEffectVolume: 0.431
+    stopSoundEffectOnAdvance: 0
+  - speakerId: Bar
+    text: "Well I would see if I\u2019m content with my life as it is. So personally
+      I would pick the former, I have no regrets."
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: Hmm....
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: I see.
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: Well thanks for humoring me.
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: Bar
+    text: "No problem, and if you need an ear, always hear listenin\u2019"
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 8300000, guid: bdf426bcb575d4241a29af714fc7172b, type: 3}
+    soundEffectVolume: 0.42
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: Of course, goodbye, and take care.
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: Bar
+    text: Till next time, {playerName}
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  choicePrompt: What should I say?
+  choices: []
+  nextNode: {fileID: 0}

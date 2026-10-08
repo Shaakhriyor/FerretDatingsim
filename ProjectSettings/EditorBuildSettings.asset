@@ -6,11 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
+    path: Assets/Scenes/MAINMENU.unity
     guid: e2ec7694a2019484ebba274b9ab8c1ea
   - enabled: 1
     path: Assets/Scenes/Prologue_Club.unity
     guid: 371c7e2b129fc3e468604869f8678627
+  - enabled: 1
+    path: Assets/Scenes/Prologue_Doctor.unity
+    guid: 205da376b96e75f4f8cdcab8a24d177d
+  - enabled: 1
+    path: Assets/Scenes/Prologue_Bar.unity
+    guid: 68a116d3a62eeac47a66a17b374dc56a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

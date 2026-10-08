@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b20a87d1ce4647b48ad8824eaf6b51a2, type: 3}
+  m_Name: +Karma
+  m_EditorClassIdentifier: Assembly-CSharp::VNStoryNode
+  lines:
+  - speakerId: MC
+    text: Haha very "funny"
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 8300000, guid: 8b4d2e646e9edab4c867a971dc59352a, type: 3}
+    soundEffectVolume: 0.481
+    stopSoundEffectOnAdvance: 1
+  - speakerId: Bar
+    text: you gotta admit that was kinda funny
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 8300000, guid: 404ad6ccaee494541817890d864c9e3e, type: 3}
+    soundEffectVolume: 0.206
+    stopSoundEffectOnAdvance: 1
+  choicePrompt: What should I say?
+  choices: []
+  nextNode: {fileID: 11400000, guid: 78e06a06ef4bbf64ebe49f14ab56eac0, type: 2}

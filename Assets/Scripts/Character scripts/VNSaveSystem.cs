@@ -28,18 +28,21 @@ public static class VNSaveSystem
         if (node == null) return "";
         var text = new StringBuilder();
         if (node.lines != null) foreach (var line in node.lines)
-        {
-            if (line == null) { text.Append("null;"); continue; }
-            text.Append(line.speakerId).Append('\n').Append(line.text).Append('\n')
-                .Append(line.expression).Append('\n').Append(line.pose).Append('\n')
-                .Append(line.voiceCue).Append('\n').Append(assets.Id(line.scenePicture)).Append('\n');
-        }
+            {
+                if (line == null) { text.Append("null;"); continue; }
+                text.Append(line.speakerId).Append('\n').Append(line.text).Append('\n')
+                    .Append(line.expression).Append('\n').Append(line.pose).Append('\n')
+                    .Append(line.voiceCue).Append('\n').Append(assets.Id(line.scenePicture)).Append('\n');
+                if (line.fadeToBlack)
+                    text.Append("fade-to-black:").Append(line.fadeDuration.ToString("R", System.Globalization.CultureInfo.InvariantCulture)).Append('\n');
+                if (line.endDoctorIntro) text.Append("end-doctor-intro\n");
+            }
         text.Append(node.choicePrompt).Append('\n');
         if (node.choices != null) foreach (var choice in node.choices)
-        {
-            if (choice == null) { text.Append("null;"); continue; }
-            text.Append(choice.choiceText).Append('\n').Append(choice.karmaChange).Append('\n').Append(assets.Id(choice.nextNode)).Append('\n');
-        }
+            {
+                if (choice == null) { text.Append("null;"); continue; }
+                text.Append(choice.choiceText).Append('\n').Append(choice.karmaChange).Append('\n').Append(assets.Id(choice.nextNode)).Append('\n');
+            }
         text.Append(assets.Id(node.nextNode));
         using (var hash = System.Security.Cryptography.SHA256.Create())
             return Convert.ToBase64String(hash.ComputeHash(Encoding.UTF8.GetBytes(text.ToString())));
@@ -79,12 +82,20 @@ public static class VNSaveSystem
             data.characters.Add(character.CaptureSave(Key(character.transform)));
         foreach (AudioSource source in UnityEngine.Object.FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
-            if (!source.loop || source.clip == null) continue;
-            data.audio.Add(new VNAudioSnapshot {
-                key = AudioKey(source), clipId = Catalog.Id(source.clip), samples = source.timeSamples,
-                volume = source.volume, pitch = source.pitch, playing = source.isPlaying
+            // VNDoctorIntro saves its own ringing, including looping while waiting for a line.
+            if (!source.loop || source.clip == null || source.GetComponent<VNDoctorIntro>() != null) continue;
+            data.audio.Add(new VNAudioSnapshot
+            {
+                key = AudioKey(source),
+                clipId = Catalog.Id(source.clip),
+                samples = source.timeSamples,
+                volume = source.volume,
+                pitch = source.pitch,
+                playing = source.isPlaying
             });
         }
+        foreach (VNDoctorIntro intro in UnityEngine.Object.FindObjectsByType<VNDoctorIntro>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            if (intro.isActiveAndEnabled) data.doctorIntros.Add(intro.CaptureSave(Key(intro.transform)));
         return data;
     }
 
@@ -196,11 +207,16 @@ public static class VNSaveSystem
         var sources = new Dictionary<string, AudioSource>();
         foreach (var source in UnityEngine.Object.FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             sources[AudioKey(source)] = source;
+        var intros = new Dictionary<string, VNDoctorIntro>();
+        foreach (var intro in UnityEngine.Object.FindObjectsByType<VNDoctorIntro>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            if (intro.isActiveAndEnabled) intros[Key(intro.transform)] = intro;
+        if (data.doctorIntros != null) foreach (var state in data.doctorIntros)
+                if (!intros.ContainsKey(state.key)) throw new InvalidOperationException("The saved doctor intro has been moved or removed from this scene.");
         if (data.hasKarma && KarmaManager.Instance == null) throw new InvalidOperationException("The saved scene needs its KarmaManager.");
         if (data.characters != null) foreach (var state in data.characters)
-            if (!characters.ContainsKey(state.key)) throw new InvalidOperationException("A saved character has been moved or removed from this scene.");
+                if (!characters.ContainsKey(state.key)) throw new InvalidOperationException("A saved character has been moved or removed from this scene.");
         if (data.audio != null) foreach (var state in data.audio)
-            if (!sources.ContainsKey(state.key)) throw new InvalidOperationException("A saved music or ambience object has been moved or removed.");
+                if (!sources.ContainsKey(state.key)) throw new InvalidOperationException("A saved music or ambience object has been moved or removed.");
 
         PlayerName = string.IsNullOrWhiteSpace(data.playerName) ? "MC" : data.playerName;
         Decisions = data.decisions != null ? new List<VNSaveChoice>(data.decisions) : new List<VNSaveChoice>();
@@ -209,19 +225,23 @@ public static class VNSaveSystem
         if (data.characters != null) foreach (var state in data.characters) characters[state.key].RestoreSave(state);
         foreach (var source in sources.Values) if (source.loop) source.Stop();
         if (data.audio != null) foreach (var state in data.audio)
-        {
-            AudioSource source = sources[state.key];
-            source.Stop();
-            source.clip = Catalog.Resolve<AudioClip>(state.clipId);
-            source.volume = Mathf.Clamp01(state.volume);
-            source.pitch = state.pitch;
-            source.loop = true;
-            if (state.playing && source.gameObject.activeInHierarchy && source.enabled)
             {
-                source.Play();
-                source.timeSamples = Mathf.Clamp(state.samples, 0, Mathf.Max(0, source.clip.samples - 1));
+                AudioSource source = sources[state.key];
+                source.Stop();
+                source.clip = Catalog.Resolve<AudioClip>(state.clipId);
+                source.volume = Mathf.Clamp01(state.volume);
+                source.pitch = state.pitch;
+                source.loop = true;
+                if (state.playing && source.gameObject.activeInHierarchy && source.enabled)
+                {
+                    source.Play();
+                    source.timeSamples = Mathf.Clamp(state.samples, 0, Mathf.Max(0, source.clip.samples - 1));
+                }
             }
-        }
+        // Older saves have no intro snapshot; do not restart the opening effect.
+        foreach (var intro in intros.Values) intro.FinishImmediately();
+        if (data.doctorIntros != null) foreach (var state in data.doctorIntros)
+                intros[state.key].RestoreSave(state);
     }
 
     public static string Key(Transform transform)

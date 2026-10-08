@@ -1,0 +1,291 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f16521fb743f466458b1eb720a96c495, type: 3}
+  m_Name: Doctor_Opening
+  m_EditorClassIdentifier: Assembly-CSharp::VNStoryNode
+  lines:
+  - speakerId: 
+    text: ...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: 
+    text: ...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: 
+    text: ...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: 
+    text: ....
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: 
+    text: ....
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: DR
+    text: 'Mr.{playerName}? Mr.{playerName}! '
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 1
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: DR
+    text: Did you hear a word i just said?
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: Yeah...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: Cancer...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: A week to live.
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: DR
+    text: 'With treament, we are looking at 2 to 3 months though it isn''t guarenteed. '
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: ...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: DR
+    text: Listen. there is an alternate solution.
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: What's the catch?
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: DR
+    text: Insurance doesnt cover it.
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: What is this other "solution"?
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: DR
+    text: I don't know any details, considering that it's very risky...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: ...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: DR
+    text: Are you willing to take that risk?
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: MC
+    text: I need time to think about it...
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  - speakerId: DR
+    text: Here is the business card.
+    scenePicture: {fileID: 0}
+    fadeToBlack: 0
+    fadeDuration: 0
+    endDoctorIntro: 0
+    expression: 
+    pose: 
+    voiceCue: 
+    voiceCueVolume: 0
+    soundEffect: {fileID: 0}
+    soundEffectVolume: 0
+    stopSoundEffectOnAdvance: 0
+  choicePrompt: What should I say?
+  choices: []
+  nextNode: {fileID: 0}

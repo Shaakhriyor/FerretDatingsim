@@ -65,12 +65,21 @@ public class VNHeartMenu : MonoBehaviour
         backButton.onClick.AddListener(OpenMain);
         cancelButton.onClick.AddListener(CancelConfirmation);
         confirmButton.onClick.AddListener(Confirm);
-        for (int i = 0; i < slots.Length; i++) { int index = i; slots[i].button.onClick.AddListener(() => SelectSlot(index)); }
+        for (int i = 0; i < slots.Length; i++)
+        {
+            int index = i;
+            slots[i].button.onClick.AddListener(() => SelectSlot(index));
+            var rightClick = slots[i].button.GetComponent<VNSaveSlotRightClick>();
+            if (rightClick == null)
+                rightClick = slots[i].button.gameObject.AddComponent<VNSaveSlotRightClick>();
+            rightClick.Configure(this, index);
+        }
         for (int i = 0; i < pageButtons.Length; i++) { int index = i; pageButtons[i].onClick.AddListener(() => ChangePage(index)); }
     }
 
     private void Update()
     {
+        if (VNSceneTransition.IsBusy) return;
         if (busy || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
         if (!open) OpenMain();
         else if (confirmation.activeSelf) CancelConfirmation();
@@ -83,6 +92,7 @@ public class VNHeartMenu : MonoBehaviour
     public void OpenLoad() { RequestPage(Page.Load); }
     private void RequestPage(Page requested)
     {
+        if (VNSceneTransition.IsBusy) return;
         if (busy || !isActiveAndEnabled) return;
         if (open) StartCoroutine(ChangeView(requested));
         else StartCoroutine(OpenRoutine(requested));
@@ -238,7 +248,50 @@ public class VNHeartMenu : MonoBehaviour
             if (VNSaveSystem.Load(data)) { busy = true; overlay.interactable = false; status.text = "Loading..."; }
             else Close();
         }
-        catch (Exception error) { status.text = "Could not load: " + error.Message; }
+        catch (Exception error)
+        {
+            status.text = "Could not load: " + error.Message;
+            Debug.LogError("SAVE LOAD FAILED: " + error, this);
+        }
+    }
+
+    public void RequestDeleteSlot(int index)
+    {
+        if (!isActiveAndEnabled || !open || busy || page == Page.Main ||
+            !slotsPage.activeInHierarchy || !overlay.interactable ||
+            confirmation.activeSelf || index < 0 || index >= slots.Length)
+            return;
+
+        // Capture the absolute slot now; do not recalculate it on confirmation.
+        int slot = pageIndex * 6 + index + 1;
+        try
+        {
+            // No deserialization: even outdated or unreadable saves can be deleted.
+            if (!VNSaveSystem.Exists(slot)) return;
+            Ask("Delete slot " + slot.ToString("D2") + "?\nThis cannot be undone.",
+                () => DeleteSlot(slot));
+        }
+        catch (Exception error)
+        {
+            status.text = "Could not delete: " + error.Message;
+            Debug.LogError("SAVE DELETE FAILED: " + error, this);
+        }
+    }
+
+    private void DeleteSlot(int slot)
+    {
+        try
+        {
+            VNSaveSlotFiles.Delete(VNSaveSystem.SaveDirectory, slot, VNSaveSystem.SlotCount);
+            RefreshSlots();
+            status.text = "Deleted slot " + slot.ToString("D2") + ".";
+            SelectControl(backButton);
+        }
+        catch (Exception error)
+        {
+            status.text = "Could not delete: " + error.Message;
+            Debug.LogError("SAVE DELETE FAILED: " + error, this);
+        }
     }
 
     private void Ask(string message, Action action)

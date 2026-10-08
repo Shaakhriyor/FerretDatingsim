@@ -13,25 +13,71 @@ MonoBehaviour:
   m_Name: VNSaveCatalog
   m_EditorClassIdentifier: Assembly-CSharp::VNSaveCatalog
   entries:
+  - id: 01191143545a82b41bada0084ed8d3c9:8300000
+    asset: {fileID: 8300000, guid: 01191143545a82b41bada0084ed8d3c9, type: 3}
   - id: 0bf569ac2700c1046afe61b15e27ef0b:11400000
     asset: {fileID: 11400000, guid: 0bf569ac2700c1046afe61b15e27ef0b, type: 2}
+  - id: 18491f90e8ddc6f479baf83f161b9faf:-4716595279646536008
+    asset: {fileID: -4716595279646536008, guid: 18491f90e8ddc6f479baf83f161b9faf, type: 3}
+  - id: 1b41a43b3a8d78341a40387a42e5e1ed:11400000
+    asset: {fileID: 11400000, guid: 1b41a43b3a8d78341a40387a42e5e1ed, type: 2}
   - id: 1bb710131b5ec2145ab1cc7be128a263:11400000
     asset: {fileID: 11400000, guid: 1bb710131b5ec2145ab1cc7be128a263, type: 2}
+  - id: 1f1da79f27e1c9a4b92b4321e9b88a88:11400000
+    asset: {fileID: 11400000, guid: 1f1da79f27e1c9a4b92b4321e9b88a88, type: 2}
+  - id: 404ad6ccaee494541817890d864c9e3e:8300000
+    asset: {fileID: 8300000, guid: 404ad6ccaee494541817890d864c9e3e, type: 3}
+  - id: 40a50c881c2402e459ea0966cfcebd55:8300000
+    asset: {fileID: 8300000, guid: 40a50c881c2402e459ea0966cfcebd55, type: 3}
+  - id: 56afb4ed6892ae44f903b2699077bc66:8300000
+    asset: {fileID: 8300000, guid: 56afb4ed6892ae44f903b2699077bc66, type: 3}
   - id: 60d2d310cf6990041a36c6a3f48a6d2e:8300000
     asset: {fileID: 8300000, guid: 60d2d310cf6990041a36c6a3f48a6d2e, type: 3}
+  - id: 6254600b7fbfef748bcf7961664ddb5d:8300000
+    asset: {fileID: 8300000, guid: 6254600b7fbfef748bcf7961664ddb5d, type: 3}
+  - id: 6e49c9afa1179714a9afb7805a469901:8300000
+    asset: {fileID: 8300000, guid: 6e49c9afa1179714a9afb7805a469901, type: 3}
+  - id: 7189578a0015f3f4c91a37421957792a:8300000
+    asset: {fileID: 8300000, guid: 7189578a0015f3f4c91a37421957792a, type: 3}
+  - id: 78e06a06ef4bbf64ebe49f14ab56eac0:11400000
+    asset: {fileID: 11400000, guid: 78e06a06ef4bbf64ebe49f14ab56eac0, type: 2}
   - id: 793cafcffdc0a8143bfff36f2cea5e5f:8300000
     asset: {fileID: 8300000, guid: 793cafcffdc0a8143bfff36f2cea5e5f, type: 3}
+  - id: 7ee1466daa6c13246a4ba6fb578c112b:11400000
+    asset: {fileID: 11400000, guid: 7ee1466daa6c13246a4ba6fb578c112b, type: 2}
+  - id: 84c7b857f9992d344955762d9f386ffc:8300000
+    asset: {fileID: 8300000, guid: 84c7b857f9992d344955762d9f386ffc, type: 3}
   - id: 869f46d8cd5a3dd439fd889cc44d127b:11400000
     asset: {fileID: 11400000, guid: 869f46d8cd5a3dd439fd889cc44d127b, type: 2}
+  - id: 8b4d2e646e9edab4c867a971dc59352a:8300000
+    asset: {fileID: 8300000, guid: 8b4d2e646e9edab4c867a971dc59352a, type: 3}
   - id: 8b562a6a423a47b4f80ca12d7844715d:2147685559727469259
     asset: {fileID: 2147685559727469259, guid: 8b562a6a423a47b4f80ca12d7844715d, type: 3}
   - id: 90074babac9d69c4697b667993310e09:-1955448553306655712
     asset: {fileID: -1955448553306655712, guid: 90074babac9d69c4697b667993310e09, type: 3}
+  - id: 9b5657c9f19affb4b9d908f534a329e6:8300000
+    asset: {fileID: 8300000, guid: 9b5657c9f19affb4b9d908f534a329e6, type: 3}
+  - id: 9bf47b56f06fd52419ed08da2d2d15b3:8300000
+    asset: {fileID: 8300000, guid: 9bf47b56f06fd52419ed08da2d2d15b3, type: 3}
+  - id: ae495877b60c9b34e90ff6934eb56ece:8300000
+    asset: {fileID: 8300000, guid: ae495877b60c9b34e90ff6934eb56ece, type: 3}
+  - id: b79dec8c0e8e2e44d89fa5b1489357c3:8300000
+    asset: {fileID: 8300000, guid: b79dec8c0e8e2e44d89fa5b1489357c3, type: 3}
   - id: bd4b12524081bdd42b49b706327cb831:1208040086343421634
     asset: {fileID: 1208040086343421634, guid: bd4b12524081bdd42b49b706327cb831, type: 3}
+  - id: bdf426bcb575d4241a29af714fc7172b:8300000
+    asset: {fileID: 8300000, guid: bdf426bcb575d4241a29af714fc7172b, type: 3}
   - id: c3cde6500fe963b47b8e742ef9c55026:-6732294965104032732
     asset: {fileID: -6732294965104032732, guid: c3cde6500fe963b47b8e742ef9c55026, type: 3}
+  - id: ce46823098f640a4e8388c7049c7f81d:8300000
+    asset: {fileID: 8300000, guid: ce46823098f640a4e8388c7049c7f81d, type: 3}
   - id: d67b4d845edde614c87e0f64feb72b3a:8300000
     asset: {fileID: 8300000, guid: d67b4d845edde614c87e0f64feb72b3a, type: 3}
+  - id: dd6d9860ea681044cb2f28af439498f8:11400000
+    asset: {fileID: 11400000, guid: dd6d9860ea681044cb2f28af439498f8, type: 2}
   - id: e85d87bcee3c6a347920bf9335ea60b3:8300000
     asset: {fileID: 8300000, guid: e85d87bcee3c6a347920bf9335ea60b3, type: 3}
+  - id: f2e72de7446b7da4eb890a674b1a3a15:8300000
+    asset: {fileID: 8300000, guid: f2e72de7446b7da4eb890a674b1a3a15, type: 3}
+  - id: fb7d61dcb554c764fa615f8fd5361844:8300000
+    asset: {fileID: 8300000, guid: fb7d61dcb554c764fa615f8fd5361844, type: 3}
