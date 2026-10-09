@@ -272,9 +272,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Ville Virkkunen   ----   Character Design
-
-'
+  m_text: "Ville Virkkunen   ----   Character Design\n                                   
+    Karma Meter (scripts & design)\n                                     First Action
+    select button"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 29c1548d4279e4440a8d7a67682c265b, type: 2}
   m_sharedMaterial: {fileID: -728929816053948894, guid: 29c1548d4279e4440a8d7a67682c265b, type: 2}
@@ -2173,7 +2173,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Also Thank you for the,  Nicole   ----  Characters Drawing
+  m_text: 'Big Thanks for,  Nicole   ----  Characters Drawing
 
 '
   m_isRightToLeft: 0
